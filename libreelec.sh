@@ -16,12 +16,10 @@ daemonconfigfile=/storage/$daemonname.conf
 configscript=/storage/deskpi-config
 removescript=/storage/deskpi-uninstall
 daemonfanservice=/storage/.config/system.d/$daemonname.service
-
 deskpishutdownscript="/storage/.config/shutdown.sh"
 
 
-
-PIINFO=$(cat /flash/config.txt | grep 'dtparam=i2c=on')
+PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')
 if [ -z "$PIINFO" ]
 then
 	mount -o remount,rw /flash
