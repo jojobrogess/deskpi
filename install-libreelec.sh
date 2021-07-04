@@ -1,22 +1,28 @@
 #!/bin/bash
 ####init library should be installed first prior to anything####
+daemonname="deskpi"
+installationfolder=$HOME/$daemonname-Libreelecinstaller
 
-if [ -e /storage/user/lib ]; then
-	rm -f /storage/user/lib
-    mkdir /storage/user/lib
+if [ -e "/storage/user/lib/lsb" ] ; then
+	rm -r /storage/user/lib/lsb
+fi
+
+if [ ! -d "/storage/user" ] ; then
+	mkdir -p /storage/user
+	mkdir -p /storage/user/lib
+	mkdir -p /storage/user/bin
 fi
 
 # Install init library.
 cp -rf $installationfolder/lib/lsb /storage/user/lib/
+chmod +x $installationfolder/lib/lsb/init-functions
 
 ################################################################
 ####Set functions and values####
 . /storage/user/lib/lsb/init-functions
-daemonname="deskpi"
 tempmonscript=/storage/user/bin/pmwFanControl
 deskpidaemon=/storage/.config/system.d/$daemonname.service
 safeshutdaemon=/storage/.config/system.d/$daemonname-safeshut.service
-installationfolder=$HOME/$daemonname
 
 ####Check for Previous install####
 # install wiringPi library.
@@ -34,17 +40,6 @@ if [ -e $deskpidaemon-safeshut ]; then
 	touch /storage/.config/system.d/$daemonname-safeshut.service
 fi
 
-# Create user sub-directories. 
-if [ -e /storage/user/bin ]; then
-	rm -f /storage/user/bin
-	mkdir /storage/user/bin
-fi
-
-if [ -e /storage/user/lib ]; then
-	rm -f /storage/user/lib
-	mkdir /storage/user/lib
-fi
-
 ####Start Deskpi Install####
 # Check and enable otg_mode
 PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')
@@ -60,8 +55,8 @@ log_action_msg "DeskPi main control service loaded."
 cd $installationfolder/drivers/c/ 
 cp -rf $installationfolder/drivers/c/pwmFanControl /storage/user/bin/
 cp -rf $installationfolder/drivers/c/fanStop  /storage/user/bin/
-chmod 755 /storage/bin/pwmFanControl
-chmod 755 /storage/bin/fanStop
+chmod 755 /storage/user/bin/pwmFanControl
+chmod 755 /storage/user/bin/fanStop
 cp -rf $installationfolder/deskpi-config /storage/user/bin/
 cp -rf $installationfolder/Deskpi-uninstall /storage/user/bin/
 chmod 755 /storage/user/bin/deskpi-config
