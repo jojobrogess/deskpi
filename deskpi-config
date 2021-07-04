@@ -57,38 +57,38 @@ read -p "Your choice:" levelNumber
 case $levelNumber in
 	1) 
 	   log_action_msg "You've select 25% speed level"
-	   sudo sh -c "echo pwm_025 > $serial_port"
+	   sh -c "echo pwm_025 > $serial_port"
 	   log_action_msg "Fan speed level has been change to 25%"
 	   ;;
 	2) 
 	   log_action_msg "You've select 50% speed level"
-	   sudo sh -c "echo pwm_050 > $serial_port"
+	   sh -c "echo pwm_050 > $serial_port"
 	   log_action_msg "Fan speed level has been change to 50%"
 	   ;;
 	3) 
 	   log_action_msg "You've select 75% speed level"
-	   sudo sh -c "echo pwm_075 > $serial_port"
+	   sh -c "echo pwm_075 > $serial_port"
 	   log_action_msg "Fan speed level has been change to 75%"
 	   ;;
 	4) 
 	   log_action_msg "You'tve select 100% speed level"
-	   sudo sh -c "echo pwm_100 > $serial_port"
+	   sh -c "echo pwm_100 > $serial_port"
 	   log_action_msg "Fan speed level has been change to 100%"
 	   ;;
 	5) 
 	   log_action_msg "Turn off fan"
-	   sudo sh -c "echo pwm_000 > $serial_port"
+	   sh -c "echo pwm_000 > $serial_port"
 	   log_action_msg "Fan speed level has been turned off."
 	   ;;
 	6) 
 	   log_action_msg "Customizing the start speed level according the temperature"
-	   sudo systemctl stop deskpi.service & 
+	   systemctl stop deskpi.service & 
 	   set_config
-	   sudo systemctl start deskpi.service & 
+	   systemctl start deskpi.service & 
 	   ;;
 	7) 
 	   log_action_msg "Cancel manual control and enable automatical fan control"
-	   sudo systemctl start deskpi.service &
+	   systemctl start deskpi.service &
 	   ;;
 	*) 
 	   log_action_msg "You type the wrong selection, please try again!"
