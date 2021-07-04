@@ -1,5 +1,6 @@
 # Before you import the library, you need to install pyserial library.
-# via "pip3 install pyserial" in Python3.x or "pip install pyserial" in Python2.x
+import sys
+sys.path.append('/storage/.kodi/addons/script.module.pyserial/lib/')
 import serial
 import time 
 import subprocess 

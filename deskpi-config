@@ -8,21 +8,20 @@
 # pwm_075 means sending 75% PWM signal to MCU. The fan will run at 75% speed level.
 # pwm_100 means sending 100% PWM signal to MCU.The fan will run at 100% speed level. 
 # 
-. /lib/lsb/init-functions
 # This is the serial port that connect to deskPi mainboard and it will
 # communicate with Raspberry Pi and get the signal for fan speed adjusting.
 serial_port='/dev/ttyUSB0'
 
 # Stop deskpi.service so that user can define the speed level.
-sudo systemctl stop deskpi.service
+systemctl stop deskpi.service
 
 # Define the function of set_config 
 function set_config() {
-	if [ -e /etc/deskpi.conf ]; then
-		sudo sh -c "rm -f /etc/deskpi.conf" 
+	if [ -e /storage/bin/deskpi.conf ]; then
+		sh -c "rm -f /storage/bin/deskpi.conf" 
 	fi
-	sudo touch /etc/deskpi.conf
-	sudo chmod 777 /etc/deskpi.conf
+	touch /storage/bin/deskpi.conf
+	chmod 777 /storage/bin/deskpi.conf
 	log_action_msg "Under normal circumstances, we recommend four gears. The
 	following requires you to control the fan's operating status according to
 	the temperature and speed defined by yourself, and you need to input 4
@@ -34,10 +33,10 @@ function set_config() {
 	echo -e "\e[32;40mCurrent CPU Temperature:\e[0m \e[31;40m`vcgencmd measure_temp`\e[0m\n"
 	read -p  "Temperature_threshold_$i:" temp 
         read -p  "Fan_Speed level_$i:" fan_speed_level
-	sudo sh -c "echo $temp" >> /etc/deskpi.conf  
-	sudo sh -c "echo $fan_speed_level" >> /etc/deskpi.conf  
+	sh -c "echo $temp" >> /storage/bin/deskpi.conf  
+	sh -c "echo $fan_speed_level" >> /storage/bin/deskpi.conf  
 	done 
-	log_action_msg "Configuration file has been created on /etc/deskpi.conf"
+	log_action_msg "Configuration file has been created on /storage/bin/deskpi.conf"
 }
 
 # Greetings and information for user.
@@ -93,6 +92,6 @@ case $levelNumber in
 	   ;;
 	*) 
 	   log_action_msg "You type the wrong selection, please try again!"
-	   . /usr/bin/deskpi-config
+	   . /storage/bin/deskpi-config
 	   ;;
 esac

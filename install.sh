@@ -1,11 +1,9 @@
 #!/bin/bash
 # 
-. /lib/lsb/init-functions
-cd $HOME/deskpi/
 daemonname="deskpi"
-tempmonscript=/usr/bin/pmwFanControl
-deskpidaemon=/lib/systemd/system/$daemonname.service
-safeshutdaemon=/lib/systemd/system/$daemonname-safeshut.service
+tempmonscript=/storage/bin/pmwFanControl
+deskpidaemon=/storage/.config/system.d/$daemonname.service
+safeshutdaemon=/storage/.config/system.d/$daemonname-safeshut.service
 installationfolder=$HOME/$daemonname
 
 # install wiringPi library.
@@ -13,7 +11,7 @@ log_action_msg "DeskPi Fan control script installation Start."
 
 # Create service file on system.
 if [ -e $deskpidaemon ]; then
-	sudo rm -f $deskpidaemon
+	rm -f $deskpidaemon
 fi
 
 PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')
@@ -26,14 +24,14 @@ fi
 # install PWM fan control daemon.
 log_action_msg "DeskPi main control service loaded."
 cd $installationfolder/drivers/c/ 
-sudo cp -rf $installationfolder/drivers/c/pwmFanControl /usr/bin/
-sudo cp -rf $installationfolder/drivers/c/fanStop  /usr/bin/
-sudo chmod 755 /usr/bin/pwmFanControl
-sudo chmod 755 /usr/bin/fanStop
-sudo cp -rf $installationfolder/deskpi-config /usr/bin/
-sudo cp -rf $installationfolder/Deskpi-uninstall /usr/bin/
-sudo chmod 755 /usr/bin/deskpi-config
-sudo chmod 755 /usr/bin/Deskpi-uninstall
+cp -rf $installationfolder/drivers/c/pwmFanControl /storage/bin/
+cp -rf $installationfolder/drivers/c/fanStop  /storage/bin/
+chmod 755 /storage/bin/pwmFanControl
+chmod 755 /storage/bin/fanStop
+cp -rf $installationfolder/deskpi-config /storage/bin/
+cp -rf $installationfolder/Deskpi-uninstall /storage/bin/
+chmod 755 /storage/bin/deskpi-config
+chmod 755 /storage/bin/Deskpi-uninstall
 
 # Build Fan Daemon
 echo "[Unit]" > $deskpidaemon
@@ -42,7 +40,7 @@ echo "After=multi-user.target" >> $deskpidaemon
 echo "[Service]" >> $deskpidaemon
 echo "Type=simple" >> $deskpidaemon
 echo "RemainAfterExit=no" >> $deskpidaemon
-echo "ExecStart=sudo /usr/bin/pwmFanControl" >> $deskpidaemon
+echo "ExecStart=/storage/bin/pwmFanControl" >> $deskpidaemon
 echo "[Install]" >> $deskpidaemon
 echo "WantedBy=multi-user.target" >> $deskpidaemon
 
@@ -54,7 +52,7 @@ echo "Before=halt.target shutdown.target poweroff.target" >> $safeshutdaemon
 echo "DefaultDependencies=no" >> $safeshutdaemon
 echo "[Service]" >> $safeshutdaemon
 echo "Type=oneshot" >> $safeshutdaemon
-echo "ExecStart=/usr/bin/sudo /usr/bin/fanStop" >> $safeshutdaemon
+echo "ExecStart=/storage/bin/fanStop" >> $safeshutdaemon
 echo "RemainAfterExit=yes" >> $safeshutdaemon
 echo "TimeoutSec=1" >> $safeshutdaemon
 echo "[Install]" >> $safeshutdaemon
@@ -64,15 +62,15 @@ log_action_msg "DeskPi Service configuration finished."
 
 
 log_action_msg "DeskPi Service Load module." 
-sudo systemctl daemon-reload
-sudo systemctl enable $daemonname.service
-sudo systemctl start $daemonname.service &
-sudo systemctl enable $daemonname-safeshut.service
+systemctl daemon-reload
+systemctl enable $daemonname.service
+systemctl start $daemonname.service &
+systemctl enable $daemonname-safeshut.service
 
 # Finished 
 log_success_msg "DeskPi PWM Fan Control and Safeshut Service installed successfully." 
 # greetings and require rebooting system to take effect.
 log_action_msg "System will reboot in 5 seconds to take effect." 
-sudo sync
+sync
 sleep 5 
-sudo reboot
+#reboot
