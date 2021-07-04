@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
-
+ 
 int main(void){
 	while(1){
  		int serial_port = open("/dev/ttyUSB0", O_RDWR);
@@ -55,7 +55,7 @@ int main(void){
 	cfsetospeed(&tty, B9600);
 
 	if (tcsetattr(serial_port, TCSANOW, &tty) !=0){
-		printf("Please check out /boot/config.txt file\n");
+		printf("Please check out /flash/config.txt file\n");
 	}
 
 	char data[10];

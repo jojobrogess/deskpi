@@ -2,9 +2,8 @@
 import sys
 sys.path.append('/storage/.kodi/addons/script.module.pyserial/lib/')
 import serial
-import time 
-import subprocess 
-
+import time
+import subprocess
 
 ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=30)
 

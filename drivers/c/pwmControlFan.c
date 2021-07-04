@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
-
+ 
 static int serial_port=0;
 /* initialized the serial port*/
 int init_serial( char *serial_name)
@@ -16,7 +16,7 @@ int init_serial( char *serial_name)
 
 	if (serial_port < 0){
 		printf("Can not open /dev/ttyUSB0 serial port ErrorCode: %s\n", strerror(errno));
-		printf("Please check the /boot/config.txt file and add dtoverlay=dwc2, dr_mode=host and reboot RPi \n");
+		printf("Please check the /flash/config.txt file and add otg_mode=1 and reboot RPi \n");
 	}
 
 	struct termios tty;
@@ -104,7 +104,7 @@ int main(void){
 	unsigned int conf_info[8];
 	unsigned int cpu_temp=0;
 	init_serial("/dev/ttyUSB0");
-    /* default configuration if /etc/deskpi.conf dose not exist */
+    /* default configuration if /storage/usr/bin/deskpi.conf dose not exist */
 	conf_info[0]=40;
 	conf_info[1]=25;
 
@@ -119,7 +119,7 @@ int main(void){
 
 	while(1)
 	{
-		fp = fopen("/etc/deskpi.conf", "r");
+		fp = fopen("/storage/usr/bin/deskpi.conf", "r");
 		if(fp != NULL)
 		{
 			for(i=0;i<8;i++)

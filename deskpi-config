@@ -10,6 +10,8 @@
 # 
 # This is the serial port that connect to deskPi mainboard and it will
 # communicate with Raspberry Pi and get the signal for fan speed adjusting.
+import sys
+sys.path.append('/storage/.kodi/addons/script.module.pyserial/lib/')
 serial_port='/dev/ttyUSB0'
 
 # Stop deskpi.service so that user can define the speed level.
@@ -17,11 +19,11 @@ systemctl stop deskpi.service
 
 # Define the function of set_config 
 function set_config() {
-	if [ -e /storage/bin/deskpi.conf ]; then
+	if [ -e /storage/usr/bin/deskpi.conf ]; then
 		sh -c "rm -f /storage/bin/deskpi.conf" 
 	fi
-	touch /storage/bin/deskpi.conf
-	chmod 777 /storage/bin/deskpi.conf
+	touch /storage/usr/bin/deskpi.conf
+	chmod 777 /storage/usr/bin/deskpi.conf
 	log_action_msg "Under normal circumstances, we recommend four gears. The
 	following requires you to control the fan's operating status according to
 	the temperature and speed defined by yourself, and you need to input 4
@@ -33,10 +35,10 @@ function set_config() {
 	echo -e "\e[32;40mCurrent CPU Temperature:\e[0m \e[31;40m`vcgencmd measure_temp`\e[0m\n"
 	read -p  "Temperature_threshold_$i:" temp 
         read -p  "Fan_Speed level_$i:" fan_speed_level
-	sh -c "echo $temp" >> /storage/bin/deskpi.conf  
-	sh -c "echo $fan_speed_level" >> /storage/bin/deskpi.conf  
+	sh -c "echo $temp" >> /storage/usr/bin/deskpi.conf  
+	sh -c "echo $fan_speed_level" >> /storage/usr/bin/deskpi.conf  
 	done 
-	log_action_msg "Configuration file has been created on /storage/bin/deskpi.conf"
+	log_action_msg "Configuration file has been created on /storage/usr/bin/deskpi.conf"
 }
 
 # Greetings and information for user.
@@ -92,6 +94,6 @@ case $levelNumber in
 	   ;;
 	*) 
 	   log_action_msg "You type the wrong selection, please try again!"
-	   . /storage/bin/deskpi-config
+	   . /storage/usr/bin/deskpi-config
 	   ;;
 esac
