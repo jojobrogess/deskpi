@@ -3,7 +3,7 @@
 
 if [ -e /storage/usr/lib ]; then
 	rm -f /storage/usr/lib
-elif [ mkdir /storage/usr/bin ]
+    mkdir /storage/usr/bin
 fi
 
 # Install init library.
