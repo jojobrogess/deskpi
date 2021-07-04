@@ -104,7 +104,7 @@ int main(void){
 	unsigned int conf_info[8];
 	unsigned int cpu_temp=0;
 	init_serial("/dev/ttyUSB0");
-    /* default configuration if /storage/usr/bin/deskpi.conf dose not exist */
+    /* default configuration if /storage/user/bin/deskpi.conf dose not exist */
 	conf_info[0]=40;
 	conf_info[1]=25;
 
@@ -119,7 +119,7 @@ int main(void){
 
 	while(1)
 	{
-		fp = fopen("/storage/usr/bin/deskpi.conf", "r");
+		fp = fopen("/storage/user/bin/deskpi.conf", "r");
 		if(fp != NULL)
 		{
 			for(i=0;i<8;i++)

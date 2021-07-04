@@ -41,13 +41,13 @@ case $os_type in
 	5) 
 	   log_action_msg "Uninstalling Deskpi Utilities"
 	   bash $installation_dir/uninstall-libreelec.sh
-	   sh -c "rm -f /storage/usr/bin/deskpi.conf"
+	   sh -c "rm -f /storage/user/bin/deskpi.conf"
 	   ;;
 	6) 
 	   log_action_msg "Uninstallation Canceled"
 	   ;;
 	*) 
 	   log_action_msg "Error selection please try again"
-	   . /storage/usr/bin/Deskpi-uninstall
+	   . /storage/user/bin/Deskpi-uninstall
 	   ;;
 esac

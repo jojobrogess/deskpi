@@ -1,19 +1,19 @@
 #!/bin/bash
 ####init library should be installed first prior to anything####
 
-if [ -e /storage/usr/lib ]; then
-	rm -f /storage/usr/lib
-    mkdir /storage/usr/bin
+if [ -e /storage/user/lib ]; then
+	rm -f /storage/user/lib
+    mkdir /storage/user/lib
 fi
 
 # Install init library.
-cp -rf $installationfolder/lib/lsb /storage/usr/lib/
+cp -rf $installationfolder/lib/lsb /storage/user/lib/
 
 ################################################################
 ####Set functions and values####
-. /storage/usr/lib/lsb/init-functions
+. /storage/user/lib/lsb/init-functions
 daemonname="deskpi"
-tempmonscript=/storage/usr/bin/pmwFanControl
+tempmonscript=/storage/user/bin/pmwFanControl
 deskpidaemon=/storage/.config/system.d/$daemonname.service
 safeshutdaemon=/storage/.config/system.d/$daemonname-safeshut.service
 installationfolder=$HOME/$daemonname
@@ -35,14 +35,14 @@ if [ -e $deskpidaemon-safeshut ]; then
 fi
 
 # Create user sub-directories. 
-if [ -e /storage/usr/bin ]; then
-	rm -f /storage/usr/bin
-	mkdir /storage/usr/bin
+if [ -e /storage/user/bin ]; then
+	rm -f /storage/user/bin
+	mkdir /storage/user/bin
 fi
 
-if [ -e /storage/usr/lib ]; then
-	rm -f /storage/usr/lib
-	mkdir /storage/usr/lib
+if [ -e /storage/user/lib ]; then
+	rm -f /storage/user/lib
+	mkdir /storage/user/lib
 fi
 
 ####Start Deskpi Install####
@@ -58,17 +58,17 @@ fi
 # Install "C" PWM fan control daemon.
 log_action_msg "DeskPi main control service loaded."
 cd $installationfolder/drivers/c/ 
-cp -rf $installationfolder/drivers/c/pwmFanControl /storage/bin/
-cp -rf $installationfolder/drivers/c/fanStop  /storage/bin/
+cp -rf $installationfolder/drivers/c/pwmFanControl /storage/user/bin/
+cp -rf $installationfolder/drivers/c/fanStop  /storage/user/bin/
 chmod 755 /storage/bin/pwmFanControl
 chmod 755 /storage/bin/fanStop
-cp -rf $installationfolder/deskpi-config /storage/bin/
-cp -rf $installationfolder/Deskpi-uninstall /storage/bin/
-chmod 755 /storage/bin/deskpi-config
-chmod 755 /storage/bin/Deskpi-uninstall
+cp -rf $installationfolder/deskpi-config /storage/user/bin/
+cp -rf $installationfolder/Deskpi-uninstall /storage/user/bin/
+chmod 755 /storage/user/bin/deskpi-config
+chmod 755 /storage/user/bin/Deskpi-uninstall
 
 # Install "Python" PWM Control Fan daemon 
-cp -rf $installationfolder/drivers/python/pwmControlFan.py /storage/usr/bin/
+cp -rf $installationfolder/drivers/python/pwmControlFan.py /storage/user/bin/
 
 # Build Fan Daemon
 echo "[Unit]" > $deskpidaemon
@@ -77,7 +77,7 @@ echo "After=multi-user.target" >> $deskpidaemon
 echo "[Service]" >> $deskpidaemon
 echo "Type=simple" >> $deskpidaemon
 echo "RemainAfterExit=no" >> $deskpidaemon
-echo "ExecStart=/storage/usr/bin/pwmFanControl" >> $deskpidaemon
+echo "ExecStart=/storage/user/bin/pwmFanControl" >> $deskpidaemon
 echo "[Install]" >> $deskpidaemon
 echo "WantedBy=multi-user.target" >> $deskpidaemon
 
@@ -89,7 +89,7 @@ echo "Before=halt.target shutdown.target poweroff.target" >> $safeshutdaemon
 echo "DefaultDependencies=no" >> $safeshutdaemon
 echo "[Service]" >> $safeshutdaemon
 echo "Type=oneshot" >> $safeshutdaemon
-echo "ExecStart=/storage/usr/bin/fanStop" >> $safeshutdaemon
+echo "ExecStart=/storage/user/bin/fanStop" >> $safeshutdaemon
 echo "RemainAfterExit=yes" >> $safeshutdaemon
 echo "TimeoutSec=1" >> $safeshutdaemon
 echo "[Install]" >> $safeshutdaemon

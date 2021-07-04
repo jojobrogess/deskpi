@@ -1,6 +1,6 @@
 #!/bin/bash
 # uninstall deskpi script 
-. /storage/usr/lib/lsb/init-functions
+. /storage/user/lib/lsb/init-functions
 
 daemonname="deskpi"
 deskpidaemon=/storage/.config/system.d/$daemonname.service
@@ -27,8 +27,8 @@ systemctl stop $daemonname-safeshut.service 2&>/dev/null
 log_action_msg "Remove DeskPi PWM Fan Control and Safeshut Service."
 rm -f  $deskpidaemon  2&>/dev/null 
 rm -f  $safeshutdaemon 2&>/dev/null 
-rm -f /storage/usr/bin/fanStop 2&>/dev/null
-rm -f /storage/usr/bin/pwmFanControl 2&>/dev/null 
-rm -f /storage/usr/bin/deskpi-config 2&>/dev/null 
-rm -f /storage/usr/bin/Deskpi-uninstall 2&>/dev/null 
+rm -f /storage/user/bin/fanStop 2&>/dev/null
+rm -f /storage/user/bin/pwmFanControl 2&>/dev/null 
+rm -f /storage/user/bin/deskpi-config 2&>/dev/null 
+rm -f /storage/user/bin/Deskpi-uninstall 2&>/dev/null 
 log_success_msg "Uninstall DeskPi Driver Successfully." 
