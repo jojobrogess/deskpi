@@ -10,8 +10,9 @@
 # 
 # This is the serial port that connect to deskPi mainboard and it will
 # communicate with Raspberry Pi and get the signal for fan speed adjusting.
-import sys
-sys.path.append('/storage/.kodi/addons/script.module.pyserial/lib/')
+. /storage/user/lib/lsb/init-functions
+sys='storage/.kodi/addons/virtual.rpi.tools/lib'
+serial='/storage/.kodi/addons/script.module.pyserial/lib/'
 serial_port='/dev/ttyUSB0'
 
 # Stop deskpi.service so that user can define the speed level.
@@ -20,7 +21,7 @@ systemctl stop deskpi.service
 # Define the function of set_config 
 function set_config() {
 	if [ -e /storage/user/bin/deskpi.conf ]; then
-		sh -c "rm -f /storage/bin/deskpi.conf" 
+		sh -c "rm -f /storage/user/bin/deskpi.conf" 
 	fi
 	touch /storage/user/bin/deskpi.conf
 	chmod 777 /storage/user/bin/deskpi.conf
