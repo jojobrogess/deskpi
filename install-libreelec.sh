@@ -50,6 +50,12 @@ then
 	mount -o remount,ro /flash
 fi
 
+#Install config files.
+cp -rf $installationfolder/deskpi-config /storage/user/bin/
+cp -rf $installationfolder/Deskpi-uninstall /storage/user/bin/
+chmod 755 /storage/user/bin/deskpi-config
+chmod 755 /storage/user/bin/Deskpi-uninstall
+
 # Install "C" PWM fan control daemon.
 log_action_msg "DeskPi main control service loaded."
 cd $installationfolder/drivers/c/ 
@@ -57,10 +63,7 @@ cp -rf $installationfolder/drivers/c/pwmFanControl /storage/user/bin/
 cp -rf $installationfolder/drivers/c/fanStop  /storage/user/bin/
 chmod 755 /storage/user/bin/pwmFanControl
 chmod 755 /storage/user/bin/fanStop
-cp -rf $installationfolder/deskpi-config /storage/user/bin/
-cp -rf $installationfolder/Deskpi-uninstall /storage/user/bin/
-chmod 755 /storage/user/bin/deskpi-config
-chmod 755 /storage/user/bin/Deskpi-uninstall
+
 
 # Install "Python" PWM Control Fan daemon 
 cp -rf $installationfolder/drivers/python/pwmControlFan.py /storage/user/bin/

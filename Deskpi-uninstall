@@ -1,11 +1,14 @@
 #!/bin/bash	
 # Uninstall script 
 # Stop deskpi.service.
+. /storage/user/lib/lsb/init-functions
+daemonname="deskpi"
+installation_dir=$HOME/$daemonname-Libreelecinstaller
+
 systemctl stop deskpi.service
 systemctl disable deskpi.service
 
 # Define file locations
-installation_dir="/storage"
 # Greetings and information for user.
 log_action_msg "Welcome to Use DeskPi-Team's Product"
 log_action_msg "Please select what distribution you have: "

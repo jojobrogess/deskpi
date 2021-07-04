@@ -2,9 +2,9 @@
 # uninstall deskpi script 
 . /storage/user/lib/lsb/init-functions
 
-daemonname="deskpi"
-deskpidaemon=/storage/.config/system.d/$daemonname.service
-safeshutdaemon=/storage/.config/system.d/$daemonname-safeshut.service
+daemonname='deskpi'
+deskpidaemon='/storage/.config/system.d/$daemonname.service'
+safeshutdaemon='/storage/.config/system.d/$daemonname-safeshut.service'
 
 log_action_msg "Uninstalling DeskPi PWM Fan Control and Safeshut Service."
 sleep 1
