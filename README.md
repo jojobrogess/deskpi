@@ -76,9 +76,13 @@ Confirm by typing `yes` FULLY, typing `y` will **NOT** suffice.
 `ssh root@IP.TO.YOUR.LIBREELEC`
 
 Type this:
+
 `wget https://github.com/jojobrogess/deskpi/archive/refs/heads/Libreelecinstaller.zip`
+
 `unzip Libreelecinstaller.zip`
+
 `chmod +x deskpi-Libreelecinstaller/lib/lsb/init-functions && chmod +x deskpi-Libreelecinstaller/install-libreelec.sh`
+
 `./deskpi-Libreelecinstaller/install-libreelec.sh`
 
 
