@@ -1,205 +1,117 @@
-# deskpi
-DeskPi Pro is the Ultimate Case Kit for Raspberry Pi 4 with Full Size HDMI/2.5 Hard Disk Support and Safe Power Button, It has QC 3.0 Power Supply inside and New ICE Tower Cooler inside.
-## Product Links: https://deskpi.com
-## How to install it.
-### For Raspbian and RetroPie OS.
-```bash
-cd ~
-git clone https://github.com/DeskPi-Team/deskpi.git
-cd ~/deskpi/
-chmod +x install.sh
-sudo ./install.sh
-```
-### For Ubuntu-mate OS
-```bash
-cd ~
-git clone https://github.com/DeskPi-Team/deskpi.git
-cd ~/deskpi/
-chmod +x install-ubuntu-mate.sh
-sudo ./install-ubuntu-mate.sh
-```
-### For Manjaro OS
-```bash
-cd ~
-git clone https://github.com/DeskPi-Team/deskpi.git
-cd ~/deskpi/
-chmod +x install-manjaro.sh
-sudo ./install-manjaro.sh
-```
-### For Kali-linux-arm OS.
-* Image Download URL: https://images.kali.org/arm-images/kali-linux-2020.3a-rpi3-nexmon.img.xz <br>
-```bash
-cd ~
-git clone https://github.com/DeskPi-Team/deskpi.git
-cd ~/deskpi/
-chmod +x install-kali.sh
-sudo ./install-kali.sh
-```
-### For Twister OS v2.0.2
-`OS image: TwisterOSv2-0-2.img`
-* Image Download URL:https://twisteros.com/twisteros.html <br>
-```bash
-cd ~
-git clone https://github.com/DeskPi-Team/deskpi.git
-cd ~/deskpi/
-chmod +x install.sh
-sudo ./install.sh
-```
-### For 64 bit Raspberry Pi OS (aarm64)
-* Image Download URL: http://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2021-05-28/
-```bash
-cd ~
-git clone https://github.com/DeskPi-Team/deskpi.git
-cd ~/deskpi/
-chmod +x install.sh
-sudo ./install.sh
-```
-### For DietPi OS 64bit 
-* Make sure your OS can access internet and please install `git` first.
-* Execute this command in terminal:
-```
-apt-get update && apt-get -y install git 
-```
-* Image Download URL:  https://dietpi.com/downloads/images/DietPi_RPi-ARMv8-Buster.7z
-```bash
-cd ~
-git clone https://github.com/DeskPi-Team/deskpi.git
-cd ~/deskpi/
-./install.sh
-```
-### For Volumio OS Version: 2021-04-24-Pi
-* Image Download URL: https://updates.volumio.org/pi/volumio/2.882/volumio-2.882-2021-04-24-pi.img.zip
-* Getting Start:　https://volumio.github.io/docs/User_Manual/Quick_Start_Guide.html
-* Make sure your Volumio can access internet. 
-* There are some steps need to do.
-```
-sudo nano /etc/network/interface
-```
-make sure following parameters in file `/etc/network/interface` 
-```
-auto wlan0 
-allow-hotplug wlan0 
-iface wlan0 inet dhcp
-wpa-ssid "YOUR WIFI SSID"
-wpa-psk "YOUR WIFI PASSWORD"
-```
-and enable the internet access by typing this command in terminal:
-```
-volumio internet on
-```
-and then reboot your DeskPi.
-```
-sudo reboot
-```
-* Download DeskPi driver from github:
-```
-git clone https://github.com/DeskPi-Team/deskpi.git
-cd deskpi/
-sudo ./install.sh
-```
-* TEST it after rebooting.
-```
-deskpi-config
-```
-Select `4` and press `Enter`, you would see the fan is spinning and the front USB port are now available.
+THIS IS A CUSTOM INSTALL SCRIPT, literally hobbled together.
+FOR THE DESKPI PRO CASE and LIBRE ELEC.
 
-## How to Uninstall deskpi
-```bash
-DeskPi-uninstall 
-```
-And then select the number against to your OS Type.
-### For Windows IoT OS
-* Unsupported due to lacking of driver.
-* Testing version: Midnight falcon
-## How to control fan speed mannualy.
-* Open a terminal and typing following command:
-```bash
-deskpi-config
-```
-You can follow the instructions to setup fan speed level by typing numbers as
-following example:
-### Selection explain
-* The number from 1 to 4 is to setting your fan speed to a static level.
-* Number 5 is just turn off the fan.
-* Number 6 is to guide you to create a file located to /etc/deskpi.conf and you
-can specify the threshold of temperature and fan speed level according to your
-idea, once the file has been created, the program will according to the
-configuration file to setup your fan.
-* Number 7 is to enable automatic fan control by default paramaters. 
-** Default arguments:  
-```
-TEMP   : Fan_SPEED_LEVEL
-<40C   : 0%  
-40~50C : 25%  
-50~65C : 50%  
-65~75C : 75%  
->75C   : 100%  
-```
-![Example](https://raw.githubusercontent.com/DeskPi-Team/deskpi/master/imgs/deskpi-config-snap.jpg)
-** If you want to change it, just typing :
-```
-deskpi-config
-```
-Select `6` and then input `45` and enter, and then input `50` means setup the fan speed level to `50%` when CPU temp is above 45 degree it has 4 level to setup.
-NOTE: 50% Speed level means you have already send `PWM50` to `/dev/ttyUSB0` port, and this port will available when you add `dtoverlay=dwc2,dr_mode=host` to `/boot/config.txt` file and `reboot` your DeskPi. 
 
-## How to boot from USB SSD/HDD?
-After initial Raspberry Pi Configuration and once you have Internet Connectivity established, Install the DeskPi Pro Utilities from `https://github.com/DeskPi-Team/deskpi.git`
-Open a Terminal / Console and run the following commands:  
-```bash 
-sudo apt update
-sudo apt full-upgrade
-sudo rpi-update
-```
-When complete, run:
-```bash
-sudo reboot
-```
-Upon reboot, open Terminal again:
-```bash
-sudo raspi-config
-```
-* go to Advanced Options 
-* Select Boot Order, select #1 `USB Boot`, Return to Advanced Options,
-* Select Boot Loader Version, choose `Latest Version`
-* Save & exit
-### Reboot again (to restart with new settings)
-```bash
-sudo reboot 
-```
-After reboot, re-open Terminal again
-```bash
-sudo -E rpi-eeprom-config --edit
-```
-•	do not change anything, it is unnecessary
-•	press Ctrl-X to save, answer Y to overwrite file.
-```bash
-sudo reboot    
-```
-Now you are ready to install Raspberry-OS onto your USB Boot Device.
-You can use the Raspberry Imager from `www.raspberrypi.org` website. 
-Depending on device the new SD Card Copier can transfer the SD-Card image to the USB Device (ensure you select generate a new UUID). 
-Once your USB drive is imaged & ready to boot, shutdown your Deskpi-Pro, remove the SD-Card and power-up to boot from the USB Boot drive, once running & configured you can install your additional software and proceed as usual. 
-<br>
-* Tutorial video: https://youtu.be/wUHZb9E_WDQ  <br>
-## How to Use IR function onboard.
-1. You need to enable `gpio-ir` function by modify `/boot/config.txt` file.
-uncomment this line if not exsit please add it.
-```bash
-dtoverlay=gpio-ir,gpio_pin=17 
-```
-2. Install `lirc` package:
-```bash
-sudo apt-get install lirc
-```
-3. Modify configuration file on location: /etc/lirc/lirc_options.conf and make sure it has following parameters:
-```bash
-driver          = default
-device          = /dev/lirc0
-```
-4. Reboot your Raspberry Pi and test it with following command:
-```bash
-mode2 -d /dev/lirc1
-```
-## LOGO
-![LOGO](https://raw.githubusercontent.com/DeskPi-Team/deskpi/master/imgs/deskpilogo1.png)
+### !!!PREFACE!!!:
+I have absolutely **NO** idea what I'm doing. 
+Use all of this at **your own risk**!
+I also for some reason can't seem to be able to uninstall it fully.
+I do NOT know if the power button works, my device has the pins set to `always on`. The blue light _is_ on though.
+
+
+I added in a lsb library from my own personal RPI 4 (found in: /lib/lsb/).
+The Pyserial module and url was found by GOOGLE SEARCHING so idk if it's safe, but its hosted on a kodi mirror site soooo...
+
+I do NOT (currently) use the Deskpi Pro case for Libreelec. 
+I just got bored and was curious as to why this would be complicated in the first place.
+(Simple answer there just isn't that much info on the OS) 
+BUT if I get bored again, I might update, clean, and fix the installer. 
+As well as create an addon so you don't have to ssh into your device everytime if you want to change the temp ranges. 
+I already have some code sketched out, I just need to learn a little more about how to create an addon and then how to get that addon to operate less like an addon and more like simple bash/python. Oh yeah plus everything else in-between.
+But I digress...
+
+************************************************************************************************************************************
+
+### How to install DeskPi Pro script for Power Button and Fan Control:
+
+************************************************************************************************************************************
+REQUIREMENTS:
+You MUST be on at least `LibreELEC-RPi4.arm-9.95.4`
+extra computer or at least ssh terminal
+extra usb
+
+You will need to load a matrix ready version of pyserial on a USB and install it as an addon. 
+`https://mirrors.kodi.tv/addons/matrix/script.module.pyserial/` 
+MAKE SURE you choose the latest(as of right now it's):
+Script.module.pyserial-3.4.0+matrix.2.zip | 100.0 KiB | 2020-May-01 14:30
+
+**IF you're `ADVANCED` GO TO BOTTOM**
+
+************************************************************************************************************************************
+
+### After you do that, then follow these instructions:
+
+************************************************************************************************************************************
+
+Connect LibreElec to the internet.
+        This can be done with either ethernet or WiFi
+        To check if the Ethernet or WiFi adapters are enabled, go to Settings>LibreElec>Network 
+
+Enable SSH. You need another computer to access the terminal of LibreElec
+        This can be done upon installation during wiki. Default Username= `root` Password=`libreelec`
+        To check if SSH is enabled, go to
+        Settings>LibreElec> Services 
+
+You might also want to make sure to allow addons/updates from any source. 
+        Settings> System> Addons
+
+Install Raspberry Pi Tools and System Tools
+        These can be installed by going to Addons>Install from Repository>LibreElec Addons>Program Addons 
+
+Plug the USB device you loaded with pyserial into your device.
+Install Pyserial from usb
+         Go to Addons>Install from a zip file>Navigate to usb drive>pyserial.zip (should install like an addon) but it's just a library.(AFAIK)
+
+Connect via SSH. The default username for LibreElec is `root` while the default password is `libreelec`
+        For Windows users, the best way to use SSH is through Putty using the IP address of the Pi and port 22.
+        Linux users `ssh root@[ip address of device]`.
+            If connecting to the device for the first time, you will be asked if you're sure you want to connect to the device. 
+Confirm by typing `yes` FULLY, typing `y` will **NOT** suffice. 
+
+************************************************************************************************************************************ 
+   
+### After you've installed the required libraries, Connect into Libreelec through SSH:
+
+************************************************************************************************************************************
+`ssh root@IP.TO.YOUR.LIBREELEC`
+
+Type this:
+`wget https://github.com/jojobrogess/deskpi/archive/refs/heads/Libreelecinstaller.zip`
+`unzip Libreelecinstaller.zip`
+`chmod +x deskpi-Libreelecinstaller/lib/lsb/init-functions && chmod +x deskpi-Libreelecinstaller/install-libreelec.sh`
+`./deskpi-Libreelecinstaller/install-libreelec.sh`
+
+
+************************************************************************************************************************************ 
+   
+### After the device reboots:
+
+************************************************************************************************************************************
+
+Reconnect through SSH and run this:
+`./Libreelecinstaller/Deskpi-config`
+
+Use the config menu normally. 
+At this moment, idk what happens if you try to set custom values or if the options would even be persistent after reboot.
+
+************************************************************************************************************************************
+
+### FOR ADVANCED
+
+************************************************************************************************************************************
+
+1. Download `https://mirrors.kodi.tv/addons/matrix/script.module.pyserial/` put on USB.
+2. Install .zip through addons page.
+3. Install `Raspberry Pi Tools` and `System Tools` from Kodi repo.
+4. ssh into device
+5. `wget https://github.com/jojobrogess/deskpi/archive/refs/heads/Libreelecinstaller.zip`
+6. `unzip Libreelecinstaller.zip`
+7. `chmod +x deskpi-Libreelecinstaller/lib/lsb/init-functions && chmod +x deskpi-Libreelecinstaller/install-libreelec.sh`
+8. `./deskpi-Libreelecinstaller/install-libreelec.sh`
+9. Wait for reboot. Reconnect ssh.
+10. `./Libreelecinstaller/Deskpi-config`
+11. Adjust speed and temps.
+
+
+
+Note (as of right now): I have not been able to make an addon to be able to adjust the deskpi-config files so you can change the temperature ranges without having to SSH into your libreelec every time. If I can build one, I will either post in this thread or make a new one.
