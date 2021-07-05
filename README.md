@@ -127,10 +127,13 @@ Reconnect through SSH and run this:
 Use the config menu normally. 
 At this moment, idk what happens if you try to set custom values or if the options would even be persistent after reboot.
 
+**********************************************************************************************************************************************************************
+
 Note (as of right now): I have not been able to make an addon to be able to adjust the deskpi-config files so you can change the temperature ranges without having to SSH into your libreelec every time. If I can build one, I will either post in this thread or make a new one.
 
-Oh and here's what that skin looks like:
-You might want to mute before playing.
+**********************************************************************************************************************************************************************
+
+Oh and here's what that skin looks like. You might want to mute before playing:
 
 https://user-images.githubusercontent.com/17692472/124431769-a82d4680-dd25-11eb-8925-de87995f4024.mp4
 
