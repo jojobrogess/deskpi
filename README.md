@@ -9,7 +9,7 @@ https://github.com/SerpentDrago/skin.auramod/tree/Matrix
 
 **********************************************************************************************************************************************************************
 
-## !!!PREFACE!!!:
+# !!!PREFACE!!!:
 I have absolutely **NO** idea what I'm doing. 
 Use all of this at **your own risk**!
 I also for some reason can't seem to be able to uninstall it fully.
@@ -29,15 +29,16 @@ But I digress...
 
 ************************************************************************************************************************************
 
-### How to install DeskPi Pro script for Power Button and Fan Control:
+## How to install DeskPi Pro script for Power Button and Fan Control:
 
 ************************************************************************************************************************************
-REQUIREMENTS:
+### REQUIREMENTS:
+
 You MUST be on at least `LibreELEC-RPi4.arm-9.95.4`
 extra computer or at least ssh terminal
 extra usb
 
-You will need to load a matrix ready version of pyserial on a USB and install it as an addon. 
+You will need to download a matrix ready version of pyserial on a USB and install it as an addon. 
 `https://mirrors.kodi.tv/addons/matrix/script.module.pyserial/` 
 MAKE SURE you choose the latest(as of right now it's):
 Script.module.pyserial-3.4.0+matrix.2.zip | 100.0 KiB | 2020-May-01 14:30
@@ -107,7 +108,7 @@ At this moment, idk what happens if you try to set custom values or if the optio
 
 ************************************************************************************************************************************
 
-### FOR ADVANCED
+## FOR ADVANCED:
 
 ************************************************************************************************************************************
 
@@ -125,4 +126,4 @@ At this moment, idk what happens if you try to set custom values or if the optio
 
 
 
-Note (as of right now): I have not been able to make an addon to be able to adjust the deskpi-config files so you can change the temperature ranges without having to SSH into your libreelec every time. If I can build one, I will either post in this thread(https://github.com/DeskPi-Team/deskpi/issues/17) or make a new one.
+Note (as of right now): I have not been able to make an addon to be able to adjust the deskpi-config files so you can change the temperature ranges without having to SSH into your libreelec every time. If I can build one, I will either post in this thread or make a new one.
