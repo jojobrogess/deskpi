@@ -9,7 +9,7 @@ https://github.com/SerpentDrago/skin.auramod/tree/Matrix
 
 **********************************************************************************************************************************************************************
 
-# !!!PREFACE!!!:
+## !!!PREFACE!!!:
 I have absolutely **NO** idea what I'm doing. 
 Use all of this at **your own risk**!
 I also for some reason can't seem to be able to uninstall it fully.
@@ -32,7 +32,7 @@ But I digress...
 ## How to install DeskPi Pro script for Power Button and Fan Control:
 
 ************************************************************************************************************************************
-### REQUIREMENTS:
+### Requirements:
 
 You MUST be on at least `LibreELEC-RPi4.arm-9.95.4`
 extra computer or at least ssh terminal
@@ -93,22 +93,12 @@ Type this:
 
 `./deskpi-Libreelecinstaller/install-libreelec.sh`
 
-
-************************************************************************************************************************************ 
-   
-### After the device reboots:
+#### Skip the next section "For Advanced Users" 
+#### Go to "After the device reboot" section
 
 ************************************************************************************************************************************
 
-Reconnect through SSH and run this:
-`./Libreelecinstaller/Deskpi-config`
-
-Use the config menu normally. 
-At this moment, idk what happens if you try to set custom values or if the options would even be persistent after reboot.
-
-************************************************************************************************************************************
-
-## FOR ADVANCED:
+## For Advanced Users:
 
 ************************************************************************************************************************************
 
@@ -125,5 +115,16 @@ At this moment, idk what happens if you try to set custom values or if the optio
 11. Adjust speed and temps.
 
 
+************************************************************************************************************************************ 
+   
+### After the device reboots:
+
+************************************************************************************************************************************
+
+Reconnect through SSH and run this:
+`./Libreelecinstaller/Deskpi-config`
+
+Use the config menu normally. 
+At this moment, idk what happens if you try to set custom values or if the options would even be persistent after reboot.
 
 Note (as of right now): I have not been able to make an addon to be able to adjust the deskpi-config files so you can change the temperature ranges without having to SSH into your libreelec every time. If I can build one, I will either post in this thread or make a new one.
