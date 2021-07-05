@@ -118,4 +118,4 @@ At this moment, idk what happens if you try to set custom values or if the optio
 
 
 
-Note (as of right now): I have not been able to make an addon to be able to adjust the deskpi-config files so you can change the temperature ranges without having to SSH into your libreelec every time. If I can build one, I will either post in this thread or make a new one.
+Note (as of right now): I have not been able to make an addon to be able to adjust the deskpi-config files so you can change the temperature ranges without having to SSH into your libreelec every time. If I can build one, I will either post in this thread(https://github.com/DeskPi-Team/deskpi/issues/17) or make a new one.
