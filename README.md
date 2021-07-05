@@ -113,7 +113,7 @@ At this moment, idk what happens if you try to set custom values or if the optio
 
 1. Download `https://mirrors.kodi.tv/addons/matrix/script.module.pyserial/` put on USB.
 2. Install .zip through addons page.
-3. Install `Raspberry Pi Tools` and `System Tools` from Kodi repo/Programs.
+3. Install `Raspberry Pi Tools` and `System Tools` from Kodi repo>Programs.
 4. ssh into device
 5. `wget https://github.com/jojobrogess/deskpi/archive/refs/heads/Libreelecinstaller.zip`
 6. `unzip Libreelecinstaller.zip`
