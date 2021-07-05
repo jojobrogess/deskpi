@@ -1,8 +1,15 @@
 THIS IS A CUSTOM INSTALL SCRIPT, literally hobbled together.
 FOR THE DESKPI PRO CASE and LIBRE ELEC.
 
+**********************************************************************************************************************************************************************
 
-### !!!PREFACE!!!:
+# Please go check out the AuraMod skin being developed by SerpentDrago and others:
+AuraMod is a Heavily Modified version of Aura by jurialmunkey. Combining parts and code of Aura, Artic Zephyr 2, Titan Bingie and many others!
+https://github.com/SerpentDrago/skin.auramod/tree/Matrix
+
+**********************************************************************************************************************************************************************
+
+## !!!PREFACE!!!:
 I have absolutely **NO** idea what I'm doing. 
 Use all of this at **your own risk**!
 I also for some reason can't seem to be able to uninstall it fully.
