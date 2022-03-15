@@ -1,28 +1,47 @@
 #!/bin/bash
 ####init library should be installed first prior to anything####
 daemonname="deskpi"
-installationfolder=$HOME/$daemonname-Libreelecinstaller
+installationfolder=$HOME/$daemonname
 
-if [ -e "/storage/user/lib/lsb" ] ; then
-	rm -r /storage/user/lib/lsb
-fi
+deskpi_create_file() {
+	if [ -f $1 ]; then
+        rm $1
+    fi
+	touch $1
+	chmod 666 $1
+}
 
-if [ ! -d "/storage/user" ] ; then
-	mkdir -p /storage/user
-	mkdir -p /storage/user/lib
-	mkdir -p /storage/user/bin
-fi
-
+#if [ -e "/storage/user/lib/lsb" ] ; then
+#	rm -r /storage/user/lib/lsb
+#fi
+#
+#if [ ! -d "/storage/user" ] ; then
+#	mkdir -p /storage/user
+#	mkdir -p /storage/user/lib
+#	mkdir -p /storage/user/bin
+#fi
+#
 # Install init library.
-cp -rf $installationfolder/lib/lsb /storage/user/lib/
-chmod +x $installationfolder/lib/lsb/init-functions
-
+#cp -rf $installationfolder/lib/lsb /storage/user/lib/
+#chmod +x $installationfolder/lib/lsb/init-functions
+#
 ################################################################
 ####Set functions and values####
 . /storage/user/lib/lsb/init-functions
-tempmonscript=/storage/user/bin/pmwFanControl
+daemonname="deskpi"
+powerbuttonscript=/storage/.config/$daemonname.py
+shutdaemonscript=/storage/.config/$daemonname-safeshut.service
+tempmonscript=/storage/user/bin/pmwFanControl.py
+shutdaemonscript=/storage/.config/$daemonname-safeshut.service
 deskpidaemon=/storage/.config/system.d/$daemonname.service
-safeshutdaemon=/storage/.config/system.d/$daemonname-safeshut.service
+
+# daemonname="deskpi"
+# powerbuttonscript=/storage/.config/$daemonname.py
+# shutdownscript="/storage/.config/"$daemonname"-poweroff.py"
+# daemonconfigfile=/storage/$daemonname.conf
+# configscript=/storage/deskpi-config
+# removescript=/storage/deskpi-uninstall
+# daemonfanservice=/storage/.config/system.d/$daemonname.service
 
 ####Check for Previous install####
 # install wiringPi library.
@@ -42,11 +61,11 @@ fi
 
 ####Start Deskpi Install####
 # Check and enable otg_mode
-PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')
+PIINFO=$(cat /flash/config.txt | grep 'CONFIG_USB_DWC2=y,dtoverlay=dwc2,dr_mode=host')
 if [ -z "$PIINFO" ]
 then
 	mount -o remount,rw /flash
-	echo "otg_mode=1" >> /flash/config.txt
+	echo "CONFIG_USB_DWC2=y,dtoverlay=dwc2,dr_mode=host" >> /flash/config.txt
 	mount -o remount,ro /flash
 fi
 
@@ -59,14 +78,10 @@ chmod 755 /storage/user/bin/Deskpi-uninstall
 # Install "C" PWM fan control daemon.
 log_action_msg "DeskPi main control service loaded."
 cd $installationfolder/drivers/c/ 
-cp -rf $installationfolder/drivers/c/pwmFanControl /storage/user/bin/
-cp -rf $installationfolder/drivers/c/fanStop  /storage/user/bin/
+cp -rf $installationfolder/drivers/pwmFanControl /storage/user/bin/
+cp -rf $installationfolder/drivers/fanStop  /storage/user/bin/
 chmod 755 /storage/user/bin/pwmFanControl
 chmod 755 /storage/user/bin/fanStop
-
-
-# Install "Python" PWM Control Fan daemon 
-cp -rf $installationfolder/drivers/python/pwmControlFan.py /storage/user/bin/
 
 # Build Fan Daemon
 echo "[Unit]" > $deskpidaemon
