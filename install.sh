@@ -92,7 +92,7 @@ echo "Before=halt.target shutdown.target poweroff.target" >> $shutdaemonscript
 echo "DefaultDependencies=no" >> $shutdaemonscript
 echo "[Service]" >> $shutdaemonscript
 echo "Type=oneshot" >> $shutdaemonscript
-echo "ExecStart=/storage/user/bin/fanStop" >> $shutdaemonscript
+echo "ExecStart=/storage/user/bin/safecutoffpower" >> $shutdaemonscript
 echo "RemainAfterExit=yes" >> $shutdaemonscript
 echo "TimeoutSec=1" >> $shutdaemonscript
 echo "[Install]" >> $shutdaemonscript
