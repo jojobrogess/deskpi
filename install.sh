@@ -85,18 +85,18 @@ echo "[Install]" >> $deskpidaemon
 echo "WantedBy=multi-user.target" >> $deskpidaemon
 
 # send signal to MCU before system shuting down.
-echo "[Unit]" > $shutdaemonscript
-echo "Description=DeskPi Safeshutdown Service" >> $shutdaemonscript
-echo "Conflicts=reboot.target" >> $shutdaemonscript
-echo "Before=halt.target shutdown.target poweroff.target" >> $shutdaemonscript
-echo "DefaultDependencies=no" >> $shutdaemonscript
-echo "[Service]" >> $shutdaemonscript
-echo "Type=oneshot" >> $shutdaemonscript
-echo "ExecStart=/storage/user/bin/safecutoffpower" >> $shutdaemonscript
-echo "RemainAfterExit=yes" >> $shutdaemonscript
-echo "TimeoutSec=1" >> $shutdaemonscript
-echo "[Install]" >> $shutdaemonscript
-echo "WantedBy=halt.target shutdown.target poweroff.target" >> $shutdaemonscript
+#echo "[Unit]" > $shutdaemonscript
+#echo "Description=DeskPi Safeshutdown Service" >> $shutdaemonscript
+#echo "Conflicts=reboot.target" >> $shutdaemonscript
+#echo "Before=halt.target shutdown.target poweroff.target" >> $shutdaemonscript
+#echo "DefaultDependencies=no" >> $shutdaemonscript
+#echo "[Service]" >> $shutdaemonscript
+#echo "Type=oneshot" >> $shutdaemonscript
+#echo "ExecStart=/storage/user/bin/safecutoffpower" >> $shutdaemonscript
+#echo "RemainAfterExit=yes" >> $shutdaemonscript
+#echo "TimeoutSec=1" >> $shutdaemonscript
+#echo "[Install]" >> $shutdaemonscript
+#echo "WantedBy=halt.target shutdown.target poweroff.target" >> $shutdaemonscript
 
 log_action_msg "DeskPi Service configuration finished." 
 
@@ -105,13 +105,13 @@ log_action_msg "DeskPi Service Load module."
 systemctl daemon-reload
 systemctl enable $daemonname.service
 systemctl start $daemonname.service &
-systemctl enable $daemonname-safeshut.service
-systemctl start $daemonname-safeshut.service
+#systemctl enable $daemonname-safeshut.service
+#systemctl start $daemonname-safeshut.service
 
 # Finished 
 log_success_msg "DeskPi PWM Fan Control and Safeshut Service installed successfully." 
 # greetings and require rebooting system to take effect.
 log_action_msg "System will reboot in 5 seconds to take effect." 
 sync
-sleep 5 
-reboot
+#sleep 5 
+#reboot
