@@ -19,12 +19,12 @@ fi
 ################## Install Daemon and Service ##################
 ################################################################
 
-. /storage/user/lib/lsb/init-functions
 daemonname="deskpi"
 daemonconfig=/storage/user/bin/deskpi-config
 shutdaemonscript=/storage/.config/$daemonname-safeshut.service
 deskpidaemon=/storage/.config/$daemonname.service
 pwmdriver=/storage/user/bin/pwmFanControl
+unscript=/storage/user/bin/deskpi-uninstall.sh
 
 ################################################################
 
@@ -46,7 +46,7 @@ then
 	mount -o remount,ro /flash
 fi
 
-echo "successfully Checked and Created the Boot Mode"
+echo "Successfully Checked and Created the Boot Mode"
 
 ############################
 ####Create deskpi-config####
@@ -54,10 +54,10 @@ echo "successfully Checked and Created the Boot Mode"
 
 echo "Create deskpi-config"
 
-if [ -e $deskpidaemon ]; then
-	rm -f $deskpidaemon
-	touch /storage/.config/system.d/$daemonname.service
-	chmod 755 /storage/.config/system.d/$daemonname.service
+if [ -e $daemonconfig ]; then
+	rm -f $daemonconfig
+	touch /storage/user/bin/deskpi-config
+	chmod 755 /storage/user/bin/deskpi-config
 fi
 
 echo '#!/bin/bash' >> $daemonconfig
@@ -72,7 +72,7 @@ echo '# pwm_100 means sending 100% PWM signal to MCU.The fan will run at 100% sp
 echo '#' >> $daemonconfig
 echo '# This is the serial port that connect to deskPi mainboard and it will' >> $daemonconfig
 echo '# communicate with Raspberry Pi and get the signal for fan speed adjusting.' >> $daemonconfig
-echo '. /storage/user/lib/lsb/init-functions' >> $daemonconfig
+echo '#. /storage/user/lib/lsb/init-functions' >> $daemonconfig
 echo 'sys='storage/.kodi/addons/virtual.rpi.tools/lib'' >> $daemonconfig
 echo 'serial='/storage/.kodi/addons/script.module.pyserial/lib/'' >> $daemonconfig
 echo 'serial_port='/dev/ttyUSB0'' >> $daemonconfig
@@ -162,8 +162,67 @@ echo '	   ;;' >> $daemonconfig
 echo 'esac' >> $daemonconfig
 echo '' >> $daemonconfig
 
-echo "successfully Created deskpi-config"
+echo "Successfully Created deskpi-config"
 
+############################
+##Create Uninstall Script###
+############################
+
+echo "Create Uninstall Script"
+
+if [ -e $unscript ]; then
+	rm -f $unscript
+	touch /storage/user/bin/deskpi-uninstall
+	chmod +x /storage/user/bin/deskpi-uninstall
+fi
+
+echo '#!/bin/bash' >>$unscript
+echo '# uninstall deskpi script ' >>$unscript
+echo 'daemonname='deskpi'' >>$unscript
+echo 'daemonconfig=/storage/user/bin/deskpi-config' >>$unscript
+echo 'deskpidaemon="/storage/.config/$daemonname.service"' >>$unscript
+echo '#safeshutdaemon="/storage/.config/$daemonname-safeshut.service"' >>$unscript
+
+echo 'echo "Uninstalling DeskPi PWM Fan Control and Safeshut Service."' >>$unscript
+echo 'sleep 1' >>$unscript
+echo 'echo "Remove otg_mode=1 configure from /flash/config.txt file"' >>$unscript
+
+echo 'PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')' >>$unscript
+echo 'if [ -n "$PIINFO" ]' >>$unscript
+echo 'then' >>$unscript
+echo '	mount -o remount,rw /flash' >>$unscript
+echo '	    sed -i 'otg_mode=1,dtoverlay=dwc2,dr_mode=host' /flash/config.txt # Probably not a good idea to just delete the last line rather than find and delete.' >>$unscript
+echo '	mount -o remount,ro /flash' >>$unscript
+echo 'echo "fi"' >>$unscript
+echo 'echo "Removed otg_mode=1 configure from /flash/config.txt file"' >>$unscript
+
+echo 'echo "Diable DeskPi PWM Fan Control and Safeshut Service."' >>$unscript
+
+echo 'systemctl disable $daemonname.service 2&>/dev/null' >>$unscript
+echo 'systemctl stop $daemonname.service  2&>/dev/null' >>$unscript
+echo '#systemctl disable $daemonname-safeshut.service 2&>/dev/null' >>$unscript
+echo '#systemctl stop $daemonname-safeshut.service 2&>/dev/null' >>$unscript
+
+echo 'echo "Remove DeskPi PWM Fan Control and Safeshut Service."' >>$unscript
+echo 'rm -f  $deskpidaemon  2&>/dev/null' >>$unscript
+echo '#rm -f  $safeshutdaemon 2&>/dev/null' >>$unscript
+echo '#rm -f /storage/user/bin/fanStop 2&>/dev/null' >>$unscript
+echo 'rm -f /storage/user/bin/pwmFanControl 2&>/dev/null' >>$unscript
+echo 'rm -f /storage/user/bin/deskpi-config 2&>/dev/null' >>$unscript
+echo 'echo "Uninstall DeskPi Driver Successfully."' >>$unscript
+
+echo 'echo "Remove userfiles"' >>$unscript
+echo 'rm -f $daemonconfig' >>$unscript
+echo 'rm -f /storage/user/bin/deskpi.conf' >>$unscript
+echo 'sleep 5' >>$unscript
+echo 'echo "Going to attempt to kill myself now..."' >>$unscript
+echo 'sleep 2' >>$unscript
+echo 'echo "wish me luck"' >>$unscript
+echo 'sleep 2' >>$unscript
+echo 'echo "?"' >>$unscript
+echo 'rm -- "$0"' >>$unscript
+
+echo "Successfully Creating Uninstall Script"
 
 ############################
 ####Create Driver Daemon####
@@ -173,7 +232,7 @@ echo "Create Driver Daemon"
 
 if [ -e $pwmdriver ]; then
 	rm -f $pwmdriver
-	touch $/storage/user/bin/pwmFanControl
+	touch /storage/user/bin/pwmFanControl
 	chmod 755 /storage/user/bin/pwmFanControl
 fi
 
@@ -733,28 +792,8 @@ echo '0100 0000 0000 0000 1100 0000 0300 0000' >> $pwmdriver
 echo '0000 0000 0000 0000 201d 0000 0501 0000' >> $pwmdriver
 echo '0000 0000 0000 0000 0100 0000 0000 0000' >> $pwmdriver
 
-echo "successfully Created Driver Daemon"
+echo "Successfully Created Driver Daemon"
 
-############################
-#####Create Fan Service#####
-############################
-
-echo "Creating Fan Service"
-
-
-# Create fan service file on system.
-if [ -e $deskpidaemon ]; then
-	rm -f $deskpidaemon
-	touch /storage/.config/system.d/$daemonname.service
-fi
-
-# Create safe shut off service file on system.
-if [ -e $shutidaemonscript ]; then
-	rm -f $shutdaemonscript
-	touch /storage/.config/system.d/$daemonname-safeshut.service
-fi
-
-echo "successfully Created Fan Service"
 
 ############################
 #####Build Fan Daemon#######
@@ -762,30 +801,36 @@ echo "successfully Created Fan Service"
 
 echo "Building Fan Daemon"
 
-echo '[Unit]' > $deskpidaemo
-echo 'Description=DeskPi PWM Control Fan Service' > $deskpidaemo
-echo 'After=multi-user.target' > $deskpidaemo
-echo '[Service]' > $deskpidaemo
-echo 'Type=simple' > $deskpidaemo
-echo 'RemainAfterExit=no' > $deskpidaemo
-echo 'ExecStart=/storage/user/bin/pwmFanControl' > $deskpidaemo
-echo '[Install]' > $deskpidaemo
-echo 'WantedBy=multi-user.target' > $deskpidaemo
+if [ -e $deskpidaemon ]; then
+	rm -f $deskpidaemon
+	touch /storage/.config/system.d/$daemonname.service
+fi
 
-echo "successfully Built Fan Daemon"
+echo '[Unit]' > $deskpidaemon
+echo 'Description=DeskPi PWM Control Fan Service' > $deskpidaemon
+echo 'After=multi-user.target' > $deskpidaemon
+echo '[Service]' > $deskpidaemon
+echo 'Type=simple' > $deskpidaemon
+echo 'RemainAfterExit=no' > $deskpidaemon
+echo 'ExecStart=/storage/user/bin/pwmFanControl' > $deskpidaemon
+echo '[Install]' > $deskpidaemon
+echo 'WantedBy=multi-user.target' > $deskpidaemon
+
+echo "Successfully Built Fan Daemon"
 
 ############################
-#####Create Power Service#####
+###Create Safe ShutService##
 ############################
 
-#echo "Creating Power Service"
+#echo "Creating Safe ShutService"
 
-##Installsafecutoffpower
-#cp -rf $installationfolder/drivers/safecutoffpower /storage/user/bin
-#chmod 755 /storage/user/bin/safecutoffpower
+## Create safe shut off service file on system.
+#if [ -e $shutidaemonscript ]; then
+#	rm -f $shutdaemonscript
+#	touch /storage/.config/system.d/$daemonname-safeshut.service
+#fi
 
-#echo "Successfully Created Power Service"
-
+#echo "Successfully Created Safe ShutService"
 
 ############################
 #####Build Power Daemon#####
@@ -812,8 +857,8 @@ echo "successfully Built Fan Daemon"
 ################ Daemon & Service Installation ################
 ################################################################
 
-echo "DeskPi Service configuration finished." 
-echo "Deskpi Service configuration successfully finished"
+echo "DeskPi Service Configuration finished." 
+echo "Deskpi Daemon Configuration Successfully finished"
 
 ############################
 #######Stop Services########
@@ -832,9 +877,10 @@ echo "Deskpi Service Loaded Modules Correctly"
 #########Exit Code##########
 ############################
 
-echo "DeskPi PWM Fan Control and Safeshut Service installed successfully." 
-echo "Greetings and require rebooting system to take effect."
-echo "System will reboot in 5 seconds to take effect." 
+echo "DeskPi PWM Fan Control and Safeshut Service installed Successfully." 
+echo "System requires rebooting system to take effect."
+sleep 5
+#echo "System will reboot in 5 seconds to take effect." 
 sync
 #sleep 5 
 #reboot
