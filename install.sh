@@ -4,11 +4,11 @@
 daemonname="deskpi"
 installationfolder=$HOME/$daemonname-Test
 userlibrary=/storage/user/
-initfunctions=/storage/user/lib/init-functions
-initfunctionsd=storage/user/lib/init-functionsd/
-initfunctionsd1=/storage/user/lib/init-functionsd
-initfunctionsd2=/storage/user/lib/init-functionsd
-initfunctionsd3=/storage/user/lib/init-functionsd
+initfunctions=/storage/user/lib/lsb/init-functions
+initfunctionsd=storage/user/lib/lsb/init-functionsd/
+initfunctionsd1=/storage/user/lib/lsb/init-functionsd/20-left-info-blocks
+initfunctionsd2=/storage/user/lib/lsb/init-functionsd/40-systemd
+initfunctionsd3=/storage/user/lib/lsb/init-functionsd/99-plymouth
 ################################################################
 ############################
 #### Create User Lib/Bin Directory
@@ -132,11 +132,13 @@ echo '            elif ps "${pid:-}" >/dev/null 2>&1; then' >> $initfunctions
 echo '                echo "$pid" || true' >> $initfunctions
 echo '                return 0 # program is running, but not owned by this user' >> $initfunctions
 echo '            else' >> $initfunctions
-echo '                return 1 # program is dead and /var/run pid file exists' >> $initfunctions
+echo '                return 1' >> $initfunctions
+echo '# program is dead and /var/run pid file exists' >> $initfunctions
 echo '            fi' >> $initfunctions
 echo '        fi' >> $initfunctions
 echo '      else' >> $initfunctions
-echo '        return 4 # pid file not readable, hence status is unknown.' >> $initfunctions
+echo '        return 4' >> $initfunctions
+echo '# pid file not readable, hence status is unknown.' >> $initfunctions
 echo '      fi' >> $initfunctions
 echo '     else' >> $initfunctions
 echo '       # pid file doesnt exist, try to find the pid nevertheless' >> $initfunctions
@@ -144,17 +146,21 @@ echo '       if [ -x /bin/pidof ] && [ ! "$specified" ]; then' >> $initfunctions
 echo '         status="0"' >> $initfunctions
 echo '         /bin/pidof -c -o %PPID -x $1 || status="$?"' >> $initfunctions
 echo '         if [ "$status" = 1 ]; then' >> $initfunctions
-echo '             return 3 # program is not running' >> $initfunctions
+echo '             return 3' >> $initfunctions
+echo '# program is not running' >> $initfunctions
 echo '         fi' >> $initfunctions
 echo '         return 0' >> $initfunctions
 echo '       fi' >> $initfunctions
-echo '       return 3 # specified pid file doesnt exist, program probably stopped' >> $initfunctions
+echo '       return 3' >> $initfunctions
+echo '# specified pid file doesnt exist, program probably stopped' >> $initfunctions
 echo '     fi' >> $initfunctions
 echo '    fi' >> $initfunctions
 echo '    if [ "$specified" ]; then' >> $initfunctions
-echo '        return 3 # almost certain its not running' >> $initfunctions
+echo '        return 3' >> $initfunctions
+echo '# almost certain its not running' >> $initfunctions
 echo '    fi' >> $initfunctions
-echo '    return 4 # Unable to determine status' >> $initfunctions
+echo '    return 4' >> $initfunctions
+echo '# Unable to determine status' >> $initfunctions
 echo '}' >>$initfunctions
 echo '' >> $initfunctions
 echo '# start-stop-daemon uses the same algorithm as "pidofproc" above.' >> $initfunctions
@@ -473,7 +479,7 @@ echo '' >> $initfunctions
 ############################
 
 if [ ! -d "$initfunctionsd" ] ; then
-	mkdir -p $userlibrary/lib/lsb
+	mkdir -p $initfunctionsd
 fi
 
 ############################
@@ -545,14 +551,17 @@ echo '' >> $initfunctionsd2
 echo '_use_systemctl=0' >> $initfunctionsd2
 echo 'if [ -d /run/systemd/system ]; then' >> $initfunctionsd2
 echo  '' >>  $initfunctionsd2
-echo '    if [ -n "${__init_d_script_name:-}" ]; then # scripts run with new init-d-script' >> $initfunctionsd2
+echo '    if [ -n "${__init_d_script_name:-}" ]; then' >> $initfunctionsd2
+echo '# scripts run with new init-d-script' >> $initfunctionsd2
 echo '        executable="$__init_d_script_name"' >> $initfunctionsd2
 echo '        argument="$1"' >> $initfunctionsd2
 echo '    elif [ "${0##*/}" = "init-d-script" ] ||' >> $initfunctionsd2
-echo '         [ "${0##*/}" = "${1:-}" ]; then # scripts run with old init-d-script' >> $initfunctionsd2
+echo '         [ "${0##*/}" = "${1:-}" ]; then' >> $initfunctionsd2
+echo '# scripts run with old init-d-script' >> $initfunctionsd2
 echo '        executable="$1"' >> $initfunctionsd2
 echo '        argument="$2"' >> $initfunctionsd2
-echo '    else # plain old scripts' >> $initfunctionsd2
+echo '    else' >> $initfunctionsd2
+echo '# plain old scripts' >> $initfunctionsd2
 echo '        executable="$0"' >> $initfunctionsd2
 echo '        argument="${1:-}"' >> $initfunctionsd2
 echo '    fi' >> $initfunctionsd2
@@ -733,6 +742,7 @@ log_action_msg "Create deskpi-config"
 if [ -e $deskpidaemon ]; then
 	rm -f $deskpidaemon
 	touch /storage/.config/system.d/$daemonname.service
+	chmod 755 /storage/.config/system.d/$daemonname.service
 fi
 
 echo '#!/bin/bash' >> $daemonconfig
@@ -1497,7 +1507,8 @@ log_success_msg "Deskpi Service configuration successfully finished"
 log_action_msg "DeskPi Service Load module." 
 systemctl daemon-reload
 systemctl enable $daemonname.service
-systemctl start $daemonname.service #&
+systemctl start $daemonname.service
+#& has to go ^ up there when used correctly, check logs for space placement.
 #systemctl enable $daemonname-safeshut.service
 #systemctl start $daemonname-safeshut.service
 log_success_msg "Deskpi Service Loaded Modules Correctly"
