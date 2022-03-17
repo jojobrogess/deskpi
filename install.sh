@@ -5,10 +5,10 @@ daemonname="deskpi"
 installationfolder=$HOME/$daemonname-Test
 userlibrary=/storage/user/
 initfunctions=/storage/user/lib/lsb/init-functions
-initfunctionsd=storage/user/lib/lsb/init-functionsd/
-initfunctionsd1=/storage/user/lib/lsb/init-functionsd/20-left-info-blocks
-initfunctionsd2=/storage/user/lib/lsb/init-functionsd/40-systemd
-initfunctionsd3=/storage/user/lib/lsb/init-functionsd/99-plymouth
+initfunctionsd=storage/user/lib/lsb/init-functions.d/
+initfunctionsd1=/storage/user/lib/lsb/init-functions.d/20-left-info-blocks
+initfunctionsd2=/storage/user/lib/lsb/init-functions.d/40-systemd
+initfunctionsd3=/storage/user/lib/lsb/init-functions.d/99-plymouth
 ################################################################
 ############################
 #### Create User Lib/Bin Directory
@@ -28,9 +28,9 @@ if [ ! -d "/storage/user/lib/lsb" ] ; then
 fi
 
 if [ -e "/storage/user/lib/lsb/init-functions" ] ; then
-	rm -r /storage/user/lib/lsb/init-functions
+	rm -r $initfunctions
 	touch $initfunctions
-	chmod +x $installationfolder/lib/lsb/init-functions
+	chmod +x $initfunctions
 fi
 
 echo '# /lib/lsb/init-functions for Debian -*- shell-script -*-' >> $initfunctions
@@ -478,7 +478,7 @@ echo '' >> $initfunctions
 #Create init-functions.d Directory
 ############################
 
-if [ ! -d "$initfunctionsd" ] ; then
+if [ ! -d "/storage/user/lib/lsb/init-functions.d/" ] ; then
 	mkdir -p $initfunctionsd
 fi
 
@@ -486,9 +486,10 @@ fi
 #Create init-functions.d 20-left-info-blocks
 ############################
 
-if [ -e "$initfunctionsd1" ] ; then
+if [ -e "/storage/user/lib/lsb/init-functions.d/20-left-info-blocks" ] ; then
 	rm -r $initfunctionsd1
 	touch $initfunctionsd1
+	chmod +x 755 $initfunctionsd1
 fi
 
 echo '# Default info blocks put to the left of the screen' >> $initfunctionsd1
@@ -540,9 +541,10 @@ echo '' >> $initfunctionsd1
 #Create init-functions.d 40-systemd
 ############################
 
-if [ -e "$initfunctionsd2" ] ; then
+if [ -e "/storage/user/lib/lsb/init-functions.d/40-systemd" ] ; then
 	rm -r $initfunctionsd2
 	touch $initfunctionsd2
+	chmod +x 755 $initfunctionsd2
 fi
 
 echo '# -*-Shell-script-*-' >> $initfunctionsd2
@@ -656,9 +658,10 @@ echo '' >> $initfunctionsd2
 #Create init-functions.d 99-plymouth
 ############################
 
-if [ -e "$initfunctionsd3" ] ; then
+if [ -e "$/storage/user/lib/lsb/init-functions.d/99-plymouth" ] ; then
 	rm -r $initfunctionsd3
 	touch $initfunctionsd3
+	chmod +x 755 $initfunctionsd3
 fi
 
 echo '# /lib/lsb/init-functions.d/99-plymouth' >> $initfunctionsd3
