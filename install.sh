@@ -13,6 +13,7 @@ initfunctionsd3=/storage/user/lib/lsb/init-functions.d/99-plymouth
 ############################
 #### Create User Lib/Bin Directory
 ############################
+
 if [ ! -d "/storage/user" ] ; then
 	mkdir -p $userlibrary
 	mkdir -p $userlibrary/lib
@@ -489,7 +490,7 @@ fi
 if [ -e "/storage/user/lib/lsb/init-functions.d/20-left-info-blocks" ] ; then
 	rm -r $initfunctionsd1
 	touch $initfunctionsd1
-	chmod +x 755 $initfunctionsd1
+	chmod +x $initfunctionsd1
 fi
 
 echo '# Default info blocks put to the left of the screen' >> $initfunctionsd1
@@ -544,7 +545,7 @@ echo '' >> $initfunctionsd1
 if [ -e "/storage/user/lib/lsb/init-functions.d/40-systemd" ] ; then
 	rm -r $initfunctionsd2
 	touch $initfunctionsd2
-	chmod +x 755 $initfunctionsd2
+	chmod +x $initfunctionsd2
 fi
 
 echo '# -*-Shell-script-*-' >> $initfunctionsd2
@@ -661,7 +662,7 @@ echo '' >> $initfunctionsd2
 if [ -e "$/storage/user/lib/lsb/init-functions.d/99-plymouth" ] ; then
 	rm -r $initfunctionsd3
 	touch $initfunctionsd3
-	chmod +x 755 $initfunctionsd3
+	chmod +x $initfunctionsd3
 fi
 
 echo '# /lib/lsb/init-functions.d/99-plymouth' >> $initfunctionsd3
