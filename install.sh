@@ -4,11 +4,6 @@
 daemonname="deskpi"
 installationfolder=$HOME/$daemonname-Test
 userlibrary=/storage/user/
-initfunctions=/storage/user/lib/lsb/init-functions
-initfunctionsd=storage/user/lib/lsb/init-functions.d/
-initfunctionsd1=/storage/user/lib/lsb/init-functions.d/20-left-info-blocks
-initfunctionsd2=/storage/user/lib/lsb/init-functions.d/40-systemd
-initfunctionsd3=/storage/user/lib/lsb/init-functions.d/99-plymouth
 ################################################################
 ############################
 #### Create User Lib/Bin Directory
@@ -19,690 +14,6 @@ if [ ! -d "/storage/user" ] ; then
 	mkdir -p $userlibrary/lib
 	mkdir -p $userlibrary/bin
 fi
-
-############################
-#### Create initunctions####
-############################
-
-if [ ! -d "/storage/user/lib/lsb" ] ; then
-	mkdir -p $userlibrary/lib/lsb
-fi
-
-if [ -e "/storage/user/lib/lsb/init-functions" ] ; then
-	rm -r $initfunctions
-	touch $initfunctions
-	chmod +x $initfunctions
-fi
-
-echo '# /lib/lsb/init-functions for Debian -*- shell-script -*-' >> $initfunctions
-echo '#' >> $initfunctions
-echo '#Copyright (c) 2002-08 Chris Lawrence' >> $initfunctions
-echo '#All rights reserved.' >> $initfunctions
-echo '#' >> $initfunctions
-echo '#Redistribution and use in source and binary forms, with or without' >> $initfunctions
-echo '#modification, are permitted provided that the following conditions' >> $initfunctions
-echo '#are met:' >> $initfunctions
-echo '#1. Redistributions of source code must retain the above copyright' >> $initfunctions
-echo '#   notice, this list of conditions and the following disclaimer.' >> $initfunctions
-echo '#2. Redistributions in binary form must reproduce the above copyright' >> $initfunctions
-echo '#   notice, this list of conditions and the following disclaimer in the' >> $initfunctions
-echo '#   documentation and/or other materials provided with the distribution.' >> $initfunctions
-echo '#3. Neither the name of the author nor the names of other contributors' >> $initfunctions
-echo '#   may be used to endorse or promote products derived from this software' >> $initfunctions
-echo '#   without specific prior written permission.' >> $initfunctions
-echo '#' >> $initfunctions
-echo '#THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR' >> $initfunctions
-echo '#IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED' >> $initfunctions
-echo '#WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE' >> $initfunctions
-echo '#ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE' >> $initfunctions
-echo '#LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR' >> $initfunctions
-echo '#CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF' >> $initfunctions
-echo '#SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR' >> $initfunctions
-echo '#BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,' >> $initfunctions
-echo '#WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE' >> $initfunctions
-echo '#OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,' >> $initfunctions
-echo '#EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.' >> $initfunctions
-echo '' >> $initfunctions
-echo 'start_daemon () {' >> $initfunctions
-echo '    local force nice pidfile exec args OPTIND' >> $initfunctions
-echo '    force=""' >> $initfunctions
-echo '    nice=0' >> $initfunctions
-echo '    pidfile=/dev/null' >> $initfunctions
-echo '' >> $initfunctions
-echo '    OPTIND=1' >> $initfunctions
-echo '    while getopts fn:p: opt ; do' >> $initfunctions
-echo '        case "$opt" in' >> $initfunctions
-echo '            f)  force="force";;' >> $initfunctions
-echo '            n)  nice="$OPTARG";;' >> $initfunctions
-echo '            p)  pidfile="$OPTARG";;' >> $initfunctions
-echo '        esac' >> $initfunctions
-echo '    done' >> $initfunctions
-echo '    ' >> $initfunctions
-echo '    shift $(($OPTIND - 1))' >> $initfunctions
-echo '    if [ "$1" = '--' ]; then' >> $initfunctions
-echo '        shift' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '' >> $initfunctions
-echo '    exec="$1"; shift' >> $initfunctions
-echo '' >> $initfunctions
-echo '    args="--start --nicelevel $nice --quiet --oknodo"' >> $initfunctions
-echo '    if [ "$force" ]; then' >> $initfunctions
-echo '        /sbin/start-stop-daemon $args \' >> $initfunctions
-echo '	    --chdir "$PWD" --startas $exec --pidfile /dev/null -- "$@"' >> $initfunctions
-echo '    elif [ $pidfile ]; then' >> $initfunctions
-echo '        /sbin/start-stop-daemon $args \' >> $initfunctions
-echo '	    --chdir "$PWD" --exec $exec --oknodo --pidfile "$pidfile" -- "$@"' >> $initfunctions
-echo '    else' >> $initfunctions
-echo '        /sbin/start-stop-daemon $args --chdir "$PWD" --exec $exec -- "$@"' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo 'pidofproc () {' >> $initfunctions
-echo '    local pidfile base status specified pid OPTIND' >> $initfunctions
-echo '    pidfile=' >> $initfunctions
-echo '    specified=' >> $initfunctions
-echo '    ' >> $initfunctions
-echo '    OPTIND=1' >> $initfunctions
-echo '    while getopts p: opt ; do' >> $initfunctions
-echo '        case "$opt" in' >> $initfunctions
-echo '            p)  pidfile="$OPTARG"' >> $initfunctions
-echo '                specified="specified"' >> $initfunctions
-echo '		;;' >> $initfunctions
-echo '        esac' >> $initfunctions
-echo '    done' >> $initfunctions
-echo '    shift $(($OPTIND - 1))' >> $initfunctions
-echo '    if [ $# -ne 1 ]; then' >> $initfunctions
-echo '        echo "$0: invalid arguments" >&2"' >> $initfunctions
-echo '        return 4' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '' >> $initfunctions
-echo '    base=${1##*/}' >> $initfunctions
-echo '    if [ ! "$specified" ]; then' >> $initfunctions
-echo '        pidfile="/var/run/$base.pid"' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo ''>> $initfunctions
-echo '    if [ -n "${pidfile:-}" ]; then' >> $initfunctions
-echo '     if [ -e "$pidfile" ]; then' >> $initfunctions
-echo '      if [ -r "$pidfile" ]; then' >> $initfunctions
-echo '        read pid < "$pidfile"' >> $initfunctions
-echo '        if [ -n "${pid:-}" ]; then' >> $initfunctions
-echo '            if $(kill -0 "${pid:-}" 2> /dev/null); then' >> $initfunctions
-echo '                echo "$pid" || true' >> $initfunctions
-echo '                return 0' >> $initfunctions
-echo '            elif ps "${pid:-}" >/dev/null 2>&1; then' >> $initfunctions
-echo '                echo "$pid" || true' >> $initfunctions
-echo '                return 0 # program is running, but not owned by this user' >> $initfunctions
-echo '            else' >> $initfunctions
-echo '                return 1' >> $initfunctions
-echo '# program is dead and /var/run pid file exists' >> $initfunctions
-echo '            fi' >> $initfunctions
-echo '        fi' >> $initfunctions
-echo '      else' >> $initfunctions
-echo '        return 4' >> $initfunctions
-echo '# pid file not readable, hence status is unknown.' >> $initfunctions
-echo '      fi' >> $initfunctions
-echo '     else' >> $initfunctions
-echo '       # pid file doesnt exist, try to find the pid nevertheless' >> $initfunctions
-echo '       if [ -x /bin/pidof ] && [ ! "$specified" ]; then' >> $initfunctions
-echo '         status="0"' >> $initfunctions
-echo '         /bin/pidof -c -o %PPID -x $1 || status="$?"' >> $initfunctions
-echo '         if [ "$status" = 1 ]; then' >> $initfunctions
-echo '             return 3' >> $initfunctions
-echo '# program is not running' >> $initfunctions
-echo '         fi' >> $initfunctions
-echo '         return 0' >> $initfunctions
-echo '       fi' >> $initfunctions
-echo '       return 3' >> $initfunctions
-echo '# specified pid file doesnt exist, program probably stopped' >> $initfunctions
-echo '     fi' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    if [ "$specified" ]; then' >> $initfunctions
-echo '        return 3' >> $initfunctions
-echo '# almost certain its not running' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    return 4' >> $initfunctions
-echo '# Unable to determine status' >> $initfunctions
-echo '}' >>$initfunctions
-echo '' >> $initfunctions
-echo '# start-stop-daemon uses the same algorithm as "pidofproc" above.' >> $initfunctions
-echo 'killproc () {' >> $initfunctions
-echo '    local pidfile sig status base name_param is_term_sig OPTIND' >> $initfunctions
-echo '    pidfile=' >> $initfunctions
-echo '    name_param=' >> $initfunctions
-echo '    is_term_sig=' >> $initfunctions
-echo '' >> $initfunctions
-echo '    OPTIND=1' >> $initfunctions
-echo '    while getopts p: opt ; do' >> $initfunctions
-echo '        case "$opt" in' >> $initfunctions
-echo '            p)  pidfile="$OPTARG";;' >> $initfunctions
-echo '        esac' >> $initfunctions
-echo '    done' >> $initfunctions
-echo '    shift $(($OPTIND - 1))' >> $initfunctions
-echo '' >> $initfunctions
-echo '    base=${1##*/}' >> $initfunctions
-echo '    if [ ! $pidfile ]; then' >> $initfunctions
-echo '        name_param="--name $base --pidfile /var/run/$base.pid"' >> $initfunctions
-echo '    else' >> $initfunctions
-echo '        name_param="--name $base --pidfile $pidfile"' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '' >> $initfunctions
-echo '    sig=$(echo ${2:-} | sed -e 's/^-\(.*\)/\1/')' >> $initfunctions
-echo '    sig=$(echo $sig | sed -e 's/^SIG\(.*\)/\1/')' >> $initfunctions
-echo '    if [ "$sig" = 15 ] || [ "$sig" = TERM ]; then' >> $initfunctions
-echo '        is_term_sig="terminate_signal"' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    status=0' >> $initfunctions
-echo '    if [ ! "$is_term_sig" ]; then' >> $initfunctions
-echo '        if [ -n "$sig" ]; then' >> $initfunctions
-echo '            /sbin/start-stop-daemon --stop --signal "$sig" \' >> $initfunctions
-echo '		--quiet $name_param || status="$?"' >> $initfunctions
-echo '        else' >> $initfunctions
-echo '            /sbin/start-stop-daemon --stop \' >> $initfunctions
-echo '		--retry 5 \' >> $initfunctions
-echo '		--quiet $name_param || status="$?"' >> $initfunctions
-echo '        fi' >> $initfunctions
-echo '    else' >> $initfunctions
-echo '        /sbin/start-stop-daemon --stop --quiet \' >> $initfunctions
-echo '	    --oknodo $name_param || status="$?"' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    if [ "$status" = 1 ]; then' >> $initfunctions
-echo '        if [ -z "$sig" ]; then' >> $initfunctions
-echo '            return 0' >> $initfunctions
-echo '        fi' >> $initfunctions
-echo '        return 3 # program is not running' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '' >> $initfunctions
-echo '    if [ "$status" = 0 ] && [ "$is_term_sig" ] && [ "$pidfile" ]; then' >> $initfunctions
-echo '        pidofproc -p "$pidfile" "$1" >/dev/null || rm -f "$pidfile"' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    return 0' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo '# Return LSB status' >> $initfunctions
-echo 'status_of_proc () {' >> $initfunctions
-echo '    local pidfile daemon name status OPTIND' >> $initfunctions
-echo '' >> $initfunctions
-echo '    pidfile=' >> $initfunctions
-echo '    OPTIND=1' >> $initfunctions
-echo '    while getopts p: opt ; do' >> $initfunctions
-echo '        case "$opt" in' >> $initfunctions
-echo '            p)  pidfile="$OPTARG";;' >> $initfunctions
-echo '        esac' >> $initfunctions
-echo '    done' >> $initfunctions
-echo '    shift $(($OPTIND - 1))' >> $initfunctions
-echo '' >> $initfunctions
-echo '    if [ -n "$pidfile" ]; then' >> $initfunctions
-echo '        pidfile="-p $pidfile"' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    daemon="$1"' >> $initfunctions
-echo '    name="$2"' >> $initfunctions
-echo '' >> $initfunctions
-echo '    status="0"' >> $initfunctions
-echo '    pidofproc $pidfile $daemon >/dev/null || status="$?"' >> $initfunctions
-echo '    if [ "$status" = 0 ]; then' >> $initfunctions
-echo '        log_success_msg "$name is running"' >> $initfunctions
-echo '        return 0' >> $initfunctions
-echo '    elif [ "$status" = 4 ]; then' >> $initfunctions
-echo '        log_failure_msg "could not access PID file for $name"' >> $initfunctions
-echo '        return $status' >> $initfunctions
-echo '    else' >> $initfunctions
-echo '        log_failure_msg "$name is not running"' >> $initfunctions
-echo '        return $status' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo 'log_use_fancy_output () {' >> $initfunctions
-echo '    TPUT=/usr/bin/tput' >> $initfunctions
-echo '    EXPR=/usr/bin/expr' >> $initfunctions
-echo '    if  [ -t 1 ] &&' >> $initfunctions
-echo '	[ "x${TERM:-}" != "x" ] &&' >> $initfunctions
-echo '	[ "x${TERM:-}" != "xdumb" ] &&' >> $initfunctions
-echo '	[ -x $TPUT ] && [ -x $EXPR ] &&' >> $initfunctions
-echo '	$TPUT hpa 60 >/dev/null 2>&1 &&' >> $initfunctions
-echo '	$TPUT setaf 1 >/dev/null 2>&1' >> $initfunctions
-echo '    then' >> $initfunctions
-echo '        [ -z $FANCYTTY ] && FANCYTTY=1 || true' >> $initfunctions
-echo '    else' >> $initfunctions
-echo '        FANCYTTY=0' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    case "$FANCYTTY" in' >> $initfunctions
-echo '        1|Y|yes|true)   true;;' >> $initfunctions
-echo '        *)              false;;' >> $initfunctions
-echo '    esac' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo 'log_success_msg () {' >> $initfunctions
-echo '    if [ -n "${1:-}" ]; then' >> $initfunctions
-echo '        log_begin_msg $@' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    log_end_msg 0' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo 'log_failure_msg () {' >> $initfunctions
-echo '    if [ -n "${1:-}" ]; then' >> $initfunctions
-echo '        log_begin_msg $@ "..."' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    log_end_msg 1 || true' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo 'log_warning_msg () {' >> $initfunctions
-echo '    if [ -n "${1:-}" ]; then' >> $initfunctions
-echo '        log_begin_msg $@ "..."' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    log_end_msg 255 || true' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo '#' >> $initfunctions
-echo '# NON-LSB HELPER FUNCTIONS' >> $initfunctions
-echo '#' >> $initfunctions
-echo '# int get_lsb_header_val (char *scriptpathname, char *key)' >> $initfunctions
-echo 'get_lsb_header_val () {' >> $initfunctions
-echo '        if [ ! -f "$1" ] || [ -z "${2:-}" ]; then' >> $initfunctions
-echo '                return 1' >> $initfunctions
-echo '        fi' >> $initfunctions
-echo '        LSB_S="### BEGIN INIT INFO"' >> $initfunctions
-echo '        LSB_E="### END INIT INFO"' >> $initfunctions
-echo '        sed -n "/$LSB_S/,/$LSB_E/ s/# $2: \+\(.*\)/\1/p" "$1"' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo '# If the currently running init daemon is upstart, return zero; if the' >> $initfunctions
-echo '# calling init script belongs to a package which also provides a native' >> $initfunctions
-echo '# upstart job, it should generally exit non-zero in this case.' >> $initfunctions
-echo 'init_is_upstart()' >> $initfunctions
-echo '{' >> $initfunctions
-echo '   if [ -x /sbin/initctl ] && /sbin/initctl version 2>/dev/null | /bin/grep -q upstart; then' >> $initfunctions
-echo '       return 0' >> $initfunctions
-echo '   fi' >> $initfunctions
-echo '   return 1' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo '# int log_begin_message (char *message)' >> $initfunctions
-echo 'log_begin_msg () {' >> $initfunctions
-echo '    log_begin_msg_pre "$@"' >> $initfunctions
-echo '    if [ -z "${1:-}" ]; then' >> $initfunctions
-echo '        return 1' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    echo -n "$@" || true' >> $initfunctions
-echo '    log_begin_msg_post "$@"' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo '# Sample usage:' >> $initfunctions
-echo '# log_daemon_msg "Starting GNOME Login Manager" "gdm"' >> $initfunctions
-echo '#' >> $initfunctions
-echo '# On Debian, would output "Starting GNOME Login Manager: gdm"' >> $initfunctions
-echo '# On Ubuntu, would output " * Starting GNOME Login Manager..."' >> $initfunctions
-echo '#' >> $initfunctions
-echo '# If the second argument is omitted, logging suitable for use with' >> $initfunctions
-echo '# log_progress_msg() is used:' >> $initfunctions
-echo '#' >> $initfunctions
-echo '# log_daemon_msg "Starting remote filesystem services"' >> $initfunctions
-echo '#' >> $initfunctions
-echo '# On Debian, would output "Starting remote filesystem services:"' >> $initfunctions
-echo '# On Ubuntu, would output " * Starting remote filesystem services..."' >> $initfunctions
-echo '' >> $initfunctions
-echo 'log_daemon_msg () {' >> $initfunctions
-echo '    if [ -z "${1:-}" ]; then' >> $initfunctions
-echo '        return 1' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    log_daemon_msg_pre "$@"' >> $initfunctions
-echo '' >> $initfunctions
-echo '    if [ -z "${2:-}" ]; then' >> $initfunctions
-echo '        echo -n "$1:" || true' >> $initfunctions
-echo '        return' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    ' >> $initfunctions
-echo '    echo -n "$1: $2" || true' >> $initfunctions
-echo '    log_daemon_msg_post "$@"' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo '# #319739' >> $initfunctions
-echo '#' >> $initfunctions
-echo '# Per policy docs:' >> $initfunctions
-echo '#' >> $initfunctions
-echo '#     log_daemon_msg "Starting remote file system services"' >> $initfunctions
-echo '#     log_progress_msg "nfsd"; start-stop-daemon --start --quiet nfsd' >> $initfunctions
-echo '#     log_progress_msg "mountd"; start-stop-daemon --start --quiet mountd' >> $initfunctions
-echo '#     log_progress_msg "ugidd"; start-stop-daemon --start --quiet ugidd' >> $initfunctions
-echo '#     log_end_msg 0' >> $initfunctions
-echo '#' >> $initfunctions
-echo '# You could also do something fancy with log_end_msg here based on the' >> $initfunctions
-echo '# return values of start-stop-daemon; this is left as an exercise for' >> $initfunctions
-echo '# the reader...' >> $initfunctions
-echo '#' >> $initfunctions
-echo '# On Ubuntu, one would expect log_progress_msg to be a no-op.' >> $initfunctions
-echo 'log_progress_msg () {' >> $initfunctions
-echo '    if [ -z "${1:-}" ]; then' >> $initfunctions
-echo '        return 1' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    echo -n " $@" || true' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo '' >> $initfunctions
-echo '# int log_end_message (int exitstatus)' >> $initfunctions
-echo 'log_end_msg () {' >> $initfunctions
-echo '    # If no arguments were passed, return' >> $initfunctions
-echo '    if [ -z "${1:-}" ]; then' >> $initfunctions
-echo '        return 1' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '' >> $initfunctions
-echo '    local retval' >> $initfunctions
-echo '    retval=$1' >> $initfunctions
-echo '' >> $initfunctions
-echo '    log_end_msg_pre "$@"' >> $initfunctions
-echo '' >> $initfunctions
-echo '    # Only do the fancy stuff if we have an appropriate terminal' >> $initfunctions
-echo '    # and if /usr is already mounted' >> $initfunctions
-echo '    if log_use_fancy_output; then' >> $initfunctions
-echo '        RED=$( $TPUT setaf 1)' >> $initfunctions
-echo '        YELLOW=$( $TPUT setaf 3)' >> $initfunctions
-echo '        NORMAL=$( $TPUT op)' >> $initfunctions
-echo '    else' >> $initfunctions
-echo '        RED=''' >> $initfunctions
-echo '        YELLOW=''' >> $initfunctions
-echo '        NORMAL=''' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '' >> $initfunctions
-echo '    if [ $1 -eq 0 ]; then' >> $initfunctions
-echo '        echo "." || true' >> $initfunctions
-echo '    elif [ $1 -eq 255 ]; then' >> $initfunctions
-echo '        /bin/echo -e " ${YELLOW}(warning).${NORMAL}" || true' >> $initfunctions
-echo '    else' >> $initfunctions
-echo '        /bin/echo -e " ${RED}failed!${NORMAL}" || true' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    log_end_msg_post "$@"' >> $initfunctions
-echo '    return $retval' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo 'log_action_msg () {' >> $initfunctions
-echo '    log_action_msg_pre "$@"' >> $initfunctions
-echo '    echo "$@." || true' >> $initfunctions
-echo '    log_action_msg_post "$@"' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo 'log_action_begin_msg () {' >> $initfunctions
-echo '    log_action_begin_msg_pre "$@"' >> $initfunctions
-echo '    echo -n "$@..." || true' >> $initfunctions
-echo '    log_action_begin_msg_post "$@"' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo 'log_action_cont_msg () {' >> $initfunctions
-echo '    echo -n "$@..." || true' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo 'log_action_end_msg () {' >> $initfunctions
-echo '    local end' >> $initfunctions
-echo '    log_action_end_msg_pre "$@"' >> $initfunctions
-echo '    if [ -z "${2:-}" ]; then' >> $initfunctions
-echo '        end="."' >> $initfunctions
-echo '    else' >> $initfunctions
-echo '        end=" ($2)."' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '' >> $initfunctions
-echo '    if [ $1 -eq 0 ]; then' >> $initfunctions
-echo '        echo "done${end}" || true' >> $initfunctions
-echo '    else' >> $initfunctions
-echo '        if log_use_fancy_output; then' >> $initfunctions
-echo '            RED=$( $TPUT setaf 1)' >> $initfunctions
-echo '            NORMAL=$( $TPUT op)' >> $initfunctions
-echo '            /bin/echo -e "${RED}failed${end}${NORMAL}" || true' >> $initfunctions
-echo '        else' >> $initfunctions
-echo '            echo "failed${end}" || true' >> $initfunctions
-echo '        fi' >> $initfunctions
-echo '    fi' >> $initfunctions
-echo '    log_action_end_msg_post "$@"' >> $initfunctions
-echo '}' >> $initfunctions
-echo '' >> $initfunctions
-echo '# Pre&Post empty function declaration, to be overriden from /lib/lsb/init-functions.d/*' >> $initfunctions
-echo 'log_daemon_msg_pre () { :; }' >> $initfunctions
-echo 'log_daemon_msg_post () { :; }' >> $initfunctions
-echo 'log_begin_msg_pre () { :; }' >> $initfunctions
-echo 'log_begin_msg_post () { :; }' >> $initfunctions
-echo 'log_end_msg_pre () { :; }' >> $initfunctions
-echo 'log_end_msg_post () { :; }' >> $initfunctions
-echo 'log_action_msg_pre () { :; }' >> $initfunctions
-echo 'log_action_msg_post () { :; }' >> $initfunctions
-echo 'log_action_begin_msg_pre () { :; }' >> $initfunctions
-echo 'log_action_begin_msg_post () { :; }' >> $initfunctions
-echo 'log_action_end_msg_pre () { :; }' >> $initfunctions
-echo 'log_action_end_msg_post () { :; }' >> $initfunctions
-echo '' >> $initfunctions
-echo '# Include hooks from other packages in /lib/lsb/init-functions.d' >> $initfunctions
-echo 'for hook in $(run-parts --lsbsysinit --list /lib/lsb/init-functions.d 2>/dev/null); do' >> $initfunctions
-echo '    [ -r $hook ] && . $hook || true' >> $initfunctions
-echo 'done' >> $initfunctions
-echo '' >> $initfunctions
-echo 'FANCYTTY=' >> $initfunctions
-echo '[ -e /etc/lsb-base-logging.sh ] && . /etc/lsb-base-logging.sh || true' >> $initfunctions
-echo '' >> $initfunctions
-
-############################
-#Create init-functions.d Directory
-############################
-
-if [ ! -d "/storage/user/lib/lsb/init-functions.d/" ] ; then
-	mkdir -p $initfunctionsd
-fi
-
-############################
-#Create init-functions.d 20-left-info-blocks
-############################
-
-if [ -e "/storage/user/lib/lsb/init-functions.d/20-left-info-blocks" ] ; then
-	rm -r $initfunctionsd1
-	touch $initfunctionsd1
-	chmod +x $initfunctionsd1
-fi
-
-echo '# Default info blocks put to the left of the screen' >> $initfunctionsd1
-echo 'log_daemon_msg_pre () {' >> $initfunctionsd1
-echo '    if log_use_fancy_output; then' >> $initfunctionsd1
-echo '        echo -n "[....] " || true' >> $initfunctionsd1
-echo '    fi' >> $initfunctionsd1
-echo '}' >> $initfunctionsd1
-echo 'log_begin_msg_pre () {' >> $initfunctionsd1
-echo '    log_daemon_msg_pre "$@"' >> $initfunctionsd1
-echo '}' >> $initfunctionsd1
-echo 'log_end_msg_pre () {' >> $initfunctionsd1
-echo '    if log_use_fancy_output; then' >> $initfunctionsd1
-echo '        RED=$( $TPUT setaf 1)' >> $initfunctionsd1
-echo '        GREEN=$( $TPUT setaf 2)' >> $initfunctionsd1
-echo '        YELLOW=$( $TPUT setaf 3)' >> $initfunctionsd1
-echo '        NORMAL=$( $TPUT op)' >> $initfunctionsd1
-echo '' >> $initfunctionsd1
-echo '        $TPUT civis || true' >> $initfunctionsd1
-echo '        $TPUT sc && \' >> $initfunctionsd1
-echo '        $TPUT hpa 0 && \' >> $initfunctionsd1
-echo '        if [ $1 -eq 0 ]; then' >> $initfunctionsd1
-echo '            /bin/echo -ne "[${GREEN} ok ${NORMAL}" || true' >> $initfunctionsd1
-echo '        elif [ $1 -eq 255 ]; then' >> $initfunctionsd1
-echo '            /bin/echo -ne "[${YELLOW}warn${NORMAL}" || true' >> $initfunctionsd1
-echo '        else' >> $initfunctionsd1
-echo '            /bin/echo -ne "[${RED}FAIL${NORMAL}" || true' >> $initfunctionsd1
-echo '        fi && \' >> $initfunctionsd1
-echo '        $TPUT rc || true' >> $initfunctionsd1
-echo '        $TPUT cnorm || true' >> $initfunctionsd1
-echo '    fi' >> $initfunctionsd1
-echo '}' >> $initfunctionsd1
-echo 'log_action_msg_pre () {' >> $initfunctionsd1
-echo '    if log_use_fancy_output; then' >> $initfunctionsd1
-echo '        CYAN=$( $TPUT setaf 6)' >> $initfunctionsd1
-echo '        NORMAL=$( $TPUT op)' >> $initfunctionsd1
-echo '        /bin/echo -ne "[${CYAN}info${NORMAL}] " || true' >> $initfunctionsd1
-echo '    fi' >> $initfunctionsd1
-echo '}' >> $initfunctionsd1
-echo 'log_action_begin_msg_pre () {' >> $initfunctionsd1
-echo '    log_daemon_msg_pre "$@"' >> $initfunctionsd1
-echo '}' >> $initfunctionsd1
-echo 'log_action_end_msg_pre () {' >> $initfunctionsd1
-echo '    log_end_msg_pre "$@"' >> $initfunctionsd1
-echo '}' >> $initfunctionsd1
-echo '' >> $initfunctionsd1
-
-############################
-#Create init-functions.d 40-systemd
-############################
-
-if [ -e "/storage/user/lib/lsb/init-functions.d/40-systemd" ] ; then
-	rm -r $initfunctionsd2
-	touch $initfunctionsd2
-	chmod +x $initfunctionsd2
-fi
-
-echo '# -*-Shell-script-*-' >> $initfunctionsd2
-echo '# /lib/lsb/init-functions' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '_use_systemctl=0' >> $initfunctionsd2
-echo 'if [ -d /run/systemd/system ]; then' >> $initfunctionsd2
-echo  '' >>  $initfunctionsd2
-echo '    if [ -n "${__init_d_script_name:-}" ]; then' >> $initfunctionsd2
-echo '# scripts run with new init-d-script' >> $initfunctionsd2
-echo '        executable="$__init_d_script_name"' >> $initfunctionsd2
-echo '        argument="$1"' >> $initfunctionsd2
-echo '    elif [ "${0##*/}" = "init-d-script" ] ||' >> $initfunctionsd2
-echo '         [ "${0##*/}" = "${1:-}" ]; then' >> $initfunctionsd2
-echo '# scripts run with old init-d-script' >> $initfunctionsd2
-echo '        executable="$1"' >> $initfunctionsd2
-echo '        argument="$2"' >> $initfunctionsd2
-echo '    else' >> $initfunctionsd2
-echo '# plain old scripts' >> $initfunctionsd2
-echo '        executable="$0"' >> $initfunctionsd2
-echo '        argument="${1:-}"' >> $initfunctionsd2
-echo '    fi' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '    prog=${executable##*/}' >> $initfunctionsd2
-echo '    service="${prog%.sh}.service"' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '    # Dont try to run masked services. systemctl <= 230 always succeeds here,' >> $initfunctionsd2
-echo '    # but later systemctls fail on nonexisting units; be compatible with both' >> $initfunctionsd2
-echo '    state=$(systemctl -p LoadState --value show $service 2>/dev/null) || state="not-found"' >> $initfunctionsd2
-echo '    [ "$state" = "masked" ] && exit 0' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '    # Redirect SysV init scripts when executed by the user' >> $initfunctionsd2
-echo '    if [ $PPID -ne 1 ] && [ -z "${SYSTEMCTL_SKIP_REDIRECT:-}" ]; then' >> $initfunctionsd2
-echo '        case $(readlink -f "$executable") in' >> $initfunctionsd2
-echo '            /etc/init.d/*)' >> $initfunctionsd2
-echo '                # If the state is not-found, this might be a newly installed SysV init' >> $initfunctionsd2
-echo '                # script where systemd-sysv-generator has not been run yet.' >> $initfunctionsd2
-echo '                [ "$state" != "not-found" ] || [ "$(id -u)" != 0 ] || systemctl --no-ask-password daemon-reload' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '                _use_systemctl=1' >> $initfunctionsd2
-echo '                # Some services cant reload through the .service file,' >> $initfunctionsd2
-echo '                # but can through the init script.' >> $initfunctionsd2
-echo '                if [ "$(systemctl -p CanReload --value show $service 2>/dev/null)" = "no" ] && [ "${argument:-}" = "reload" ]; then' >> $initfunctionsd2
-echo '                    _use_systemctl=0' >> $initfunctionsd2
-echo '                fi' >> $initfunctionsd2
-echo '                ;;' >> $initfunctionsd2
-echo '        esac' >> $initfunctionsd2
-echo '    fi' >> $initfunctionsd2
-echo 'fi' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo 'systemctl_redirect () {' >> $initfunctionsd2
-echo '    local s' >> $initfunctionsd2
-echo '    local rc' >> $initfunctionsd2
-echo '    local prog=${1##*/}' >> $initfunctionsd2
-echo '    local command=$2' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '    case "$command" in' >> $initfunctionsd2
-echo '        start)' >> $initfunctionsd2
-echo '            s="Starting $prog (via systemctl)"' >> $initfunctionsd2
-echo '            ;;' >> $initfunctionsd2
-echo '        stop)' >> $initfunctionsd2
-echo '            s="Stopping $prog (via systemctl)"' >> $initfunctionsd2
-echo '            ;;' >> $initfunctionsd2
-echo '        reload|force-reload)' >> $initfunctionsd2
-echo '            s="Reloading $prog configuration (via systemctl)"' >> $initfunctionsd2
-echo '            ;;' >> $initfunctionsd2
-echo '        try-restart)' >> $initfunctionsd2
-echo '            s="Restarting $prog if running (via systemctl)"' >> $initfunctionsd2
-echo '            ;;' >> $initfunctionsd2
-echo '        restart)' >> $initfunctionsd2
-echo '            s="Restarting $prog (via systemctl)"' >> $initfunctionsd2
-echo '            ;;' >> $initfunctionsd2
-echo '    esac' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '    service="${prog%.sh}.service"' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '    # avoid deadlocks during bootup and shutdown from units/hooks' >> $initfunctionsd2
-echo '    # which call "invoke-rc.d service reload" and similar, since' >> $initfunctionsd2
-echo '    # the synchronous wait plus systemds normal behaviour of' >> $initfunctionsd2
-echo '    # transactionally processing all dependencies first easily' >> $initfunctionsd2
-echo '    # causes dependency loops' >> $initfunctionsd2
-echo '    if ! OUT=$(systemctl is-system-running 2>/dev/null) && [ "$OUT" != "degraded" ]; then' >> $initfunctionsd2
-echo '        sctl_args="--job-mode=ignore-dependencies"' >> $initfunctionsd2
-echo '    fi' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '    [ "$command" = status ] || log_daemon_msg "$s" "$service"' >> $initfunctionsd2
-echo '    /bin/systemctl --no-pager $sctl_args $command "$service"' >> $initfunctionsd2
-echo '    rc=$?' >> $initfunctionsd2
-echo '    [ "$command" = status ] || log_end_msg $rc' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '    return $rc' >> $initfunctionsd2
-echo '}' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo 'if [ "$_use_systemctl" = "1" ]; then' >> $initfunctionsd2
-echo '    # Some init scripts use "set -e" and "set -u", we dont want that' >> $initfunctionsd2
-echo '    # here' >> $initfunctionsd2
-echo '    set +e' >> $initfunctionsd2
-echo '    set +u' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-echo '    case "$argument" in' >> $initfunctionsd2
-echo '        start|stop|restart|reload|force-reload|try-restart|status)' >> $initfunctionsd2
-echo '            systemctl_redirect $executable $argument' >> $initfunctionsd2
-echo '            exit $?' >> $initfunctionsd2
-echo '            ;;' >> $initfunctionsd2
-echo '    esac' >> $initfunctionsd2
-echo 'fi' >> $initfunctionsd2
-echo '' >> $initfunctionsd2
-
-
-############################
-#Create init-functions.d 99-plymouth
-############################
-
-if [ -e "$/storage/user/lib/lsb/init-functions.d/99-plymouth" ] ; then
-	rm -r $initfunctionsd3
-	touch $initfunctionsd3
-	chmod +x $initfunctionsd3
-fi
-
-echo '# /lib/lsb/init-functions.d/99-plymouth' >> $initfunctionsd3
-echo '' >> $initfunctionsd3
-echo '# Abort sourcing of this file if plymouth isnt active' >> $initfunctionsd3
-echo 'if ! plymouth --ping > /dev/null 2>&1' >> $initfunctionsd3
-echo 'then' >> $initfunctionsd3
-echo '	return' >> $initfunctionsd3
-echo 'fi' >> $initfunctionsd3
-echo '' >> $initfunctionsd3
-echo 'log_begin_msg_post ()' >> $initfunctionsd3
-echo '{' >> $initfunctionsd3
-echo '	/bin/plymouth update --status="${@}" || true' >> $initfunctionsd3
-echo ' }' >> $initfunctionsd3
-echo '' >> $initfunctionsd3
-echo 'log_end_msg_post ()' >> $initfunctionsd3
-echo '{' >> $initfunctionsd3
-echo '	:' >> $initfunctionsd3
-echo '}' >> $initfunctionsd3
-echo '' >> $initfunctionsd3
-echo 'log_action_begin_msg_post ()' >> $initfunctionsd3
-echo '{' >> $initfunctionsd3
-echo '	/bin/plymouth update --status="${@}" || true' >> $initfunctionsd3
-echo '}' >> $initfunctionsd3
-echo '' >> $initfunctionsd3
-echo 'log_action_end_msg_post ()' >> $initfunctionsd3
-echo '{' >> $initfunctionsd3
-echo '	:' >> $initfunctionsd3
-echo '}' >> $initfunctionsd3
-echo '' >> $initfunctionsd3
-echo 'log_action_msg_post ()' >> $initfunctionsd3
-echo '{' >> $initfunctionsd3
-echo '	/bin/plymouth update --status="${@}" || true' >> $initfunctionsd3
-echo '}' >> $initfunctionsd3
-echo '' >> $initfunctionsd3
-echo 'log_daemon_msg_post ()' >> $initfunctionsd3
-echo '{' >> $initfunctionsd3
-echo '	/bin/plymouth update --status="${@}" || true' >> $initfunctionsd3
-echo '}' >> $initfunctionsd3
-echo '' >> $initfunctionsd3
 
 ################################################################
 ################## Install Daemon and Service ##################
@@ -717,7 +28,7 @@ pwmdriver=/storage/user/bin/pwmFanControl
 
 ################################################################
 
-log_action_msg "DeskPi Fan control script installation Start." 
+echo "DeskPi Fan control script installation Start." 
 ###Check for Previous install####
 
 
@@ -725,7 +36,7 @@ log_action_msg "DeskPi Fan control script installation Start."
 ######Check Boot Mode######
 ############################
 
-log_action_msg "Check Boot Mode"
+echo "Check Boot Mode"
 
 PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1,dtoverlay=dwc2,dr_mode=host')
 if [ -z "$PIINFO" ]
@@ -735,13 +46,13 @@ then
 	mount -o remount,ro /flash
 fi
 
-log_success_msg "successfully Checked and Created the Boot Mode"
+echo "successfully Checked and Created the Boot Mode"
 
 ############################
 ####Create deskpi-config####
 ############################
 
-log_action_msg "Create deskpi-config"
+echo "Create deskpi-config"
 
 if [ -e $deskpidaemon ]; then
 	rm -f $deskpidaemon
@@ -776,7 +87,7 @@ echo '		sh -c "rm -f /storage/user/bin/deskpi.conf"' >> $daemonconfig
 echo '	fi' >> $daemonconfig
 echo '	touch /storage/user/bin/deskpi.conf' >> $daemonconfig
 echo '	chmod 777 /storage/user/bin/deskpi.conf' >> $daemonconfig
-echo '	log_action_msg "Under normal circumstances, we recommend four gears. The' >> $daemonconfig
+echo '	echo "Under normal circumstances, we recommend four gears. The' >> $daemonconfig
 echo '	following requires you to control the fans operating status according to' >> $daemonconfig
 echo '	the temperature and speed defined by yourself, and you need to input 4' >> $daemonconfig
 echo '	different temperature thresholds (for example: 42, 50, 60, 70) , And 4 PWM' >> $daemonconfig
@@ -790,75 +101,75 @@ echo '        read -p  "Fan_Speed level_$i:" fan_speed_level' >> $daemonconfig
 echo '	sh -c "echo $temp" >> /storage/user/bin/deskpi.conf' >> $daemonconfig
 echo '	sh -c "echo $fan_speed_level" >> /storage/user/bin/deskpi.conf' >> $daemonconfig
 echo '	done ' >> $daemonconfig
-echo '	log_action_msg "Configuration file has been created on /storage/user/bin/deskpi.conf"' >> $daemonconfig
+echo '	echo "Configuration file has been created on /storage/user/bin/deskpi.conf"' >> $daemonconfig
 echo '}' >> $daemonconfig
 echo '' >> $daemonconfig
 echo '# Greetings and information for user.' >> $daemonconfig
-echo 'log_action_msg "Welcome to Use DeskPi-Teams Product"' >> $daemonconfig
-echo 'log_action_msg "Please select speed level that you want: "' >> $daemonconfig
-echo 'log_action_msg "It will always run at the speed level that you choosed."' >> $daemonconfig
-echo 'log_action_msg "---------------------------------------------------------------"' >> $daemonconfig
-echo 'log_action_msg "1 - set fan speed level to 25%"' >> $daemonconfig
-echo 'log_action_msg "2 - set fan speed level to 50%"' >> $daemonconfig
-echo 'log_action_msg "3 - set fan speed level to 75%"' >> $daemonconfig
-echo 'log_action_msg "4 - set fan speed level to 100%"' >> $daemonconfig
-echo 'log_action_msg "5 - Turn off Fan"' >> $daemonconfig
-echo 'log_action_msg "6 - Adjust the start speed level according to the temperature"' >> $daemonconfig
-echo 'log_action_msg "7 - Cancel manual control and enable automatical fan control"' >> $daemonconfig
-echo 'log_action_msg "---------------------------------------------------------------"' >> $daemonconfig
-echo 'log_action_msg "Just input the number and press enter."' >> $daemonconfig
+echo 'echo "Welcome to Use DeskPi-Teams Product"' >> $daemonconfig
+echo 'echo "Please select speed level that you want: "' >> $daemonconfig
+echo 'echo "It will always run at the speed level that you choosed."' >> $daemonconfig
+echo 'echo "---------------------------------------------------------------"' >> $daemonconfig
+echo 'echo "1 - set fan speed level to 25%"' >> $daemonconfig
+echo 'echo "2 - set fan speed level to 50%"' >> $daemonconfig
+echo 'echo "3 - set fan speed level to 75%"' >> $daemonconfig
+echo 'echo "4 - set fan speed level to 100%"' >> $daemonconfig
+echo 'echo "5 - Turn off Fan"' >> $daemonconfig
+echo 'echo "6 - Adjust the start speed level according to the temperature"' >> $daemonconfig
+echo 'echo "7 - Cancel manual control and enable automatical fan control"' >> $daemonconfig
+echo 'echo "---------------------------------------------------------------"' >> $daemonconfig
+echo 'echo "Just input the number and press enter."' >> $daemonconfig
 echo 'read -p "Your choice:" levelNumber' >> $daemonconfig
 echo 'case $levelNumber in' >> $daemonconfig
 echo '	1) ' >> $daemonconfig
-echo '	   log_action_msg "Youve select 25% speed level"' >> $daemonconfig
+echo '	   echo "Youve select 25% speed level"' >> $daemonconfig
 echo '	   sh -c "echo pwm_025 > $serial_port"' >> $daemonconfig
-echo '	   log_action_msg "Fan speed level has been change to 25%"' >> $daemonconfig
+echo '	   echo "Fan speed level has been change to 25%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	2) ' >> $daemonconfig
-echo '	   log_action_msg "Youve select 50% speed level"' >> $daemonconfig
+echo '	   echo "Youve select 50% speed level"' >> $daemonconfig
 echo '	   sh -c "echo pwm_050 > $serial_port"' >> $daemonconfig
-echo '	   log_action_msg "Fan speed level has been change to 50%"' >> $daemonconfig
+echo '	   echo "Fan speed level has been change to 50%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	3) ' >> $daemonconfig
-echo '	   log_action_msg "Youve select 75% speed level"' >> $daemonconfig
+echo '	   echo "Youve select 75% speed level"' >> $daemonconfig
 echo '	   sh -c "echo pwm_075 > $serial_port"' >> $daemonconfig
-echo '	   log_action_msg "Fan speed level has been change to 75%"' >> $daemonconfig
+echo '	   echo "Fan speed level has been change to 75%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	4) ' >> $daemonconfig
-echo '	   log_action_msg "Youtve select 100% speed level"' >> $daemonconfig
+echo '	   echo "Youtve select 100% speed level"' >> $daemonconfig
 echo '	   sh -c "echo pwm_100 > $serial_port"' >> $daemonconfig
-echo '	   log_action_msg "Fan speed level has been change to 100%"' >> $daemonconfig
+echo '	   echo "Fan speed level has been change to 100%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	5) ' >> $daemonconfig
-echo '	   log_action_msg "Turn off fan"' >> $daemonconfig
+echo '	   echo "Turn off fan"' >> $daemonconfig
 echo '	   sh -c "echo pwm_000 > $serial_port"' >> $daemonconfig
-echo '	   log_action_msg "Fan speed level has been turned off."' >> $daemonconfig
+echo '	   echo "Fan speed level has been turned off."' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	6) ' >> $daemonconfig
-echo '	   log_action_msg "Customizing the start speed level according the temperature"' >> $daemonconfig
+echo '	   echo "Customizing the start speed level according the temperature"' >> $daemonconfig
 echo '	   systemctl stop deskpi.service & ' >> $daemonconfig
 echo '	   set_config' >> $daemonconfig
 echo '	   systemctl start deskpi.service & ' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	7) ' >> $daemonconfig
-echo '	   log_action_msg "Cancel manual control and enable automatical fan control"' >> $daemonconfig
+echo '	   echo "Cancel manual control and enable automatical fan control"' >> $daemonconfig
 echo '	   systemctl start deskpi.service &' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	*) ' >> $daemonconfig
-echo '	   log_action_msg "You type the wrong selection, please try again!"' >> $daemonconfig
+echo '	   echo "You type the wrong selection, please try again!"' >> $daemonconfig
 echo '	   . /storage/user/bin/deskpi-config' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo 'esac' >> $daemonconfig
 echo '' >> $daemonconfig
 
-log_success_msg "successfully Created deskpi-config"
+echo "successfully Created deskpi-config"
 
 
 ############################
 ####Create Driver Daemon####
 ############################
 
-log_action_msg "Create Driver Daemon"
+echo "Create Driver Daemon"
 
 if [ -e $pwmdriver ]; then
 	rm -f $pwmdriver
@@ -1422,13 +733,13 @@ echo '0100 0000 0000 0000 1100 0000 0300 0000' >> $pwmdriver
 echo '0000 0000 0000 0000 201d 0000 0501 0000' >> $pwmdriver
 echo '0000 0000 0000 0000 0100 0000 0000 0000' >> $pwmdriver
 
-log_success_msg "successfully Created Driver Daemon"
+echo "successfully Created Driver Daemon"
 
 ############################
 #####Create Fan Service#####
 ############################
 
-log_action_msg "Creating Fan Service"
+echo "Creating Fan Service"
 
 
 # Create fan service file on system.
@@ -1443,13 +754,13 @@ if [ -e $shutidaemonscript ]; then
 	touch /storage/.config/system.d/$daemonname-safeshut.service
 fi
 
-log_success_msg "successfully Created Fan Service"
+echo "successfully Created Fan Service"
 
 ############################
 #####Build Fan Daemon#######
 ############################
 
-log_action_msg "Building Fan Daemon"
+echo "Building Fan Daemon"
 
 echo '[Unit]' > $deskpidaemo
 echo 'Description=DeskPi PWM Control Fan Service' > $deskpidaemo
@@ -1461,26 +772,26 @@ echo 'ExecStart=/storage/user/bin/pwmFanControl' > $deskpidaemo
 echo '[Install]' > $deskpidaemo
 echo 'WantedBy=multi-user.target' > $deskpidaemo
 
-log_success_msg "successfully Built Fan Daemon"
+echo "successfully Built Fan Daemon"
 
 ############################
 #####Create Power Service#####
 ############################
 
-#log_action_msg "Creating Power Service"
+#echo "Creating Power Service"
 
 ##Installsafecutoffpower
 #cp -rf $installationfolder/drivers/safecutoffpower /storage/user/bin
 #chmod 755 /storage/user/bin/safecutoffpower
 
-#log_success_msg "Successfully Created Power Service"
+#echo "Successfully Created Power Service"
 
 
 ############################
 #####Build Power Daemon#####
 ############################
 
-#log_action_msg "Building Power Daemon"
+#echo "Building Power Daemon"
 
 #echo '[Unit]' > $shutdaemonscript
 #echo 'Description=DeskPi Safeshutdown Service' > $shutdaemonscript
@@ -1495,35 +806,35 @@ log_success_msg "successfully Built Fan Daemon"
 #echo '[Install]' > $shutdaemonscript
 #echo 'WantedBy=halt.target shutdown.target poweroff.target' > $shutdaemonscript
 
-#log_success_msg "Power Daemon Built"
+#echo "Power Daemon Built"
 
 ################################################################
 ################ Daemon & Service Installation ################
 ################################################################
 
-log_action_msg "DeskPi Service configuration finished." 
-log_success_msg "Deskpi Service configuration successfully finished"
+echo "DeskPi Service configuration finished." 
+echo "Deskpi Service configuration successfully finished"
 
 ############################
 #######Stop Services########
 ############################
 
-log_action_msg "DeskPi Service Load module." 
+echo "DeskPi Service Load module." 
 systemctl daemon-reload
 systemctl enable $daemonname.service
 systemctl start $daemonname.service
 #& has to go ^ up there when used correctly, check logs for space placement.
 #systemctl enable $daemonname-safeshut.service
 #systemctl start $daemonname-safeshut.service
-log_success_msg "Deskpi Service Loaded Modules Correctly"
+echo "Deskpi Service Loaded Modules Correctly"
 
 ############################
 #########Exit Code##########
 ############################
 
-log_success_msg "DeskPi PWM Fan Control and Safeshut Service installed successfully." 
-log_success_msg "Greetings and require rebooting system to take effect."
-log_action_msg "System will reboot in 5 seconds to take effect." 
+echo "DeskPi PWM Fan Control and Safeshut Service installed successfully." 
+echo "Greetings and require rebooting system to take effect."
+echo "System will reboot in 5 seconds to take effect." 
 sync
 #sleep 5 
 #reboot
