@@ -1,17 +1,15 @@
 # Before you import the library, you need to install pyserial library.
-import sys
-sys.path.append('/storage/.kodi/addons/script.module.pyserial/lib/')
 import serial
 import time
 import subprocess
 
-ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=30)
+ser=serial.Serial("/dev/ttyUSB0", 9600, timeout=30)
 
 try: 
     while True:
         if ser.isOpen():
-            cpu_temp = subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print $2\'}')
-            cpu_temp = int(cpu_temp.split('.')[0])
+            cpu_temp=subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print $2\'}')
+            cpu_temp=int(cpu_temp.split('.')[0])
 
             if cpu_temp < 40:
                 ser.write(b'pwm_000')
@@ -28,3 +26,4 @@ except KeyboardInterrupt:
     ser.write(b'pwm_000')
     ser.close()
     
+sS
