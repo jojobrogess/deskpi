@@ -2,7 +2,6 @@
 ####init library should be installed first prior to anything####
 ################################################################
 daemonname="deskpi"
-installationfolder=$HOME/$daemonname-Test
 userlibrary=/storage/user/
 ################################################################
 
@@ -31,9 +30,9 @@ fi
 daemonname="deskpi"
 daemonconfig=/storage/user/bin/deskpi-config
 #shutdaemonservice=/storage/.config/$daemonname-safeshut.service
-daemonfanservice=/storage/.config/$daemonname.service
+daemonfanservice=/storage/.config/system.d/$daemonname.service
 pwmdriver=/storage/user/bin/pwmFanControl
-unscript=/storage/user/bin/deskpi-uninstall
+uninstall=/storage/user/bin/$daemonname-uninstall
 
 ################################################################
 
@@ -78,9 +77,9 @@ echo '#' >> $daemonconfig
 echo '# This is the serial port that connect to deskPi mainboard and it will' >> $daemonconfig
 echo '# communicate with Raspberry Pi and get the signal for fan speed adjusting.' >> $daemonconfig
 echo '#. /storage/user/lib/lsb/init-functions' >> $daemonconfig
-echo 'sys='storage/.kodi/addons/virtual.rpi.tools/lib'' >> $daemonconfig
-echo 'serial='/storage/.kodi/addons/script.module.pyserial/lib/'' >> $daemonconfig
-echo 'serial_port='/dev/ttyUSB0'' >> $daemonconfig
+echo 'sys=/storage/.kodi/addons/virtual.rpi.tools/lib' >> $daemonconfig
+echo 'serial=/storage/.kodi/addons/script.module.pyserial/lib/' >> $daemonconfig
+echo 'serial_port=/dev/ttyUSB0' >> $daemonconfig
 echo '' >> $daemonconfig
 echo '# Stop deskpi.service so that user can define the speed level.' >> $daemonconfig
 echo 'systemctl stop deskpi.service' >> $daemonconfig
@@ -141,7 +140,7 @@ echo '	   sh -c "echo pwm_075 > $serial_port"' >> $daemonconfig
 echo '	   echo "Fan speed level has been change to 75%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	4) ' >> $daemonconfig
-echo '	   echo "Youtve select 100% speed level"' >> $daemonconfig
+echo '	   echo "Youve select 100% speed level"' >> $daemonconfig
 echo '	   sh -c "echo pwm_100 > $serial_port"' >> $daemonconfig
 echo '	   echo "Fan speed level has been change to 100%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
@@ -161,11 +160,10 @@ echo '	   echo "Cancel manual control and enable automatical fan control"' >> $d
 echo '	   systemctl start deskpi.service &' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	*) ' >> $daemonconfig
-echo '	   echo "You type the wrong selection, please try again!"' >> $daemonconfig
+echo '	   echo "You typed the wrong selection, please try again!"' >> $daemonconfig
 echo '	   . /storage/user/bin/deskpi-config' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo 'esac' >> $daemonconfig
-echo '' >> $daemonconfig
 
 chmod 755 $daemonconfig
 
@@ -177,55 +175,55 @@ echo "Successfully Created deskpi-config"
 
 echo "Create Uninstall Script"
 
-deskpi_create_file $unscript
+deskpi_create_file $uninstall
 
-echo '#!/bin/bash' >>$unscript
-echo '# uninstall deskpi script ' >>$unscript
-echo 'daemonname='deskpi'' >>$unscript
-echo 'daemonconfig=/storage/user/bin/deskpi-config' >>$unscript
-echo 'daemonfanservice="/storage/.config/$daemonname.service"' >>$unscript
-echo '#safeshutdaemon="/storage/.config/$daemonname-safeshut.service"' >>$unscript
+echo '#!/bin/bash' >>$uninstall
+echo '# uninstall deskpi script ' >>$uninstall
+echo 'daemonname='deskpi'' >>$uninstall
+echo 'daemonconfig=/storage/user/bin/deskpi-config' >>$uninstall
+echo 'daemonfanservice="/storage/.config/system.d/$daemonname.service"' >>$uninstall
+echo '#safeshutdaemon="/storage/.config/system.d/$daemonname-safeshut.service"' >>$uninstall
 
-echo 'echo "Uninstalling DeskPi PWM Fan Control and Safeshut Service."' >>$unscript
-echo 'sleep 1' >>$unscript
-echo 'echo "Remove otg_mode=1 configure from /flash/config.txt file"' >>$unscript
+echo 'echo "Uninstalling DeskPi PWM Fan Control and Safeshut Service."' >>$uninstall
+echo 'sleep 1' >>$uninstall
+echo 'echo "Remove otg_mode=1 configure from /flash/config.txt file"' >>$uninstall
 
-echo 'PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')' >>$unscript
-echo 'if [ -n "$PIINFO" ]' >>$unscript
-echo 'then' >>$unscript
-echo '	mount -o remount,rw /flash' >>$unscript
-echo '	    sed -i 'otg_mode=1,dtoverlay=dwc2,dr_mode=host' /flash/config.txt # Probably not a good idea to just delete the last line rather than find and delete.' >>$unscript
-echo '	mount -o remount,ro /flash' >>$unscript
-echo 'echo "fi"' >>$unscript
-echo 'echo "Removed otg_mode=1 configure from /flash/config.txt file"' >>$unscript
+echo 'PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')' >>$uninstall
+echo 'if [ -n "$PIINFO" ]' >>$uninstall
+echo 'then' >>$uninstall
+echo '	mount -o remount,rw /flash' >>$uninstall
+echo '	    sed -i 'otg_mode=1,dtoverlay=dwc2,dr_mode=host' /flash/config.txt # Probably not a good idea to just delete the last line rather than find and delete.' >>$uninstall
+echo '	mount -o remount,ro /flash' >>$uninstall
+echo 'echo "fi"' >>$uninstall
+echo 'echo "Removed otg_mode=1 configure from /flash/config.txt file"' >>$uninstall
 
-echo 'echo "Diable DeskPi PWM Fan Control and Safeshut Service."' >>$unscript
+echo 'echo "Diable DeskPi PWM Fan Control and Safeshut Service."' >>$uninstall
 
-echo 'systemctl disable $daemonname.service 2&>/dev/null' >>$unscript
-echo 'systemctl stop $daemonname.service  2&>/dev/null' >>$unscript
-echo '#systemctl disable $daemonname-safeshut.service 2&>/dev/null' >>$unscript
-echo '#systemctl stop $daemonname-safeshut.service 2&>/dev/null' >>$unscript
+echo 'systemctl disable $daemonname.service 2&>/dev/null' >>$uninstall
+echo 'systemctl stop $daemonname.service  2&>/dev/null' >>$uninstall
+echo '#systemctl disable $daemonname-safeshut.service 2&>/dev/null' >>$uninstall
+echo '#systemctl stop $daemonname-safeshut.service 2&>/dev/null' >>$uninstall
 
-echo 'echo "Remove DeskPi PWM Fan Control and Safeshut Service."' >>$unscript
-echo 'rm -f  $daemonfanservice  2&>/dev/null' >>$unscript
-echo '#rm -f  $safeshutdaemon 2&>/dev/null' >>$unscript
-echo '#rm -f /storage/user/bin/fanStop 2&>/dev/null' >>$unscript
-echo 'rm -f /storage/user/bin/pwmFanControl 2&>/dev/null' >>$unscript
-echo 'rm -f /storage/user/bin/deskpi-config 2&>/dev/null' >>$unscript
-echo 'echo "Uninstall DeskPi Driver Successfully."' >>$unscript
+echo 'echo "Remove DeskPi PWM Fan Control and Safeshut Service."' >>$uninstall
+echo 'rm -f  $daemonfanservice  2&>/dev/null' >>$uninstall
+echo '#rm -f  $safeshutdaemon 2&>/dev/null' >>$uninstall
+echo '#rm -f /storage/user/bin/fanStop 2&>/dev/null' >>$uninstall
+echo 'rm -f /storage/user/bin/pwmFanControl 2&>/dev/null' >>$uninstall
+echo 'rm -f /storage/user/bin/deskpi-config 2&>/dev/null' >>$uninstall
+echo 'echo "Uninstall DeskPi Driver Successfully."' >>$uninstall
 
-echo 'echo "Remove userfiles"' >>$unscript
-echo 'rm -f $daemonconfig' >>$unscript
-echo 'rm -f /storage/user/bin/deskpi.conf' >>$unscript
-echo 'sleep 5' >>$unscript
-echo 'echo "Going to attempt to kill myself now..."' >>$unscript
-echo 'sleep 2' >>$unscript
-echo 'echo "wish me luck"' >>$unscript
-echo 'sleep 2' >>$unscript
-echo 'echo "?"' >>$unscript
-echo 'rm -- "$0"' >>$unscript
+echo 'echo "Remove userfiles"' >>$uninstall
+echo 'rm -f $daemonconfig' >>$uninstall
+echo 'rm -f /storage/user/bin/deskpi.conf' >>$uninstall
+echo 'sleep 5' >>$uninstall
+echo 'echo "Going to attempt to kill myself now..."' >>$uninstall
+echo 'sleep 2' >>$uninstall
+echo 'echo "wish me luck"' >>$uninstall
+echo 'sleep 2' >>$uninstall
+echo 'echo "?"' >>$uninstall
+echo 'rm -- "$0"' >>$uninstall
 
-chmod 755 $unscript
+chmod 755 $uninstall
 
 echo "Successfully Creating Uninstall Script"
 
@@ -793,6 +791,8 @@ echo '0100 0000 0000 0000 1100 0000 0300 0000' >> $pwmdriver
 echo '0000 0000 0000 0000 201d 0000 0501 0000' >> $pwmdriver
 echo '0000 0000 0000 0000 0100 0000 0000 0000' >> $pwmdriver
 
+chmod 755 $pwmdriver
+
 echo "Successfully Created Driver Daemon"
 
 
@@ -804,15 +804,15 @@ echo "Building Fan Daemon"
 
 deskpi_create_file $daemonfanservice
 
-echo '[Unit]' > $daemonfanservice
-echo 'Description=DeskPi PWM Control Fan Service' > $daemonfanservice
-echo 'After=multi-user.target' > $daemonfanservice
-echo '[Service]' > $daemonfanservice
-echo 'Type=simple' > $daemonfanservice
-echo 'RemainAfterExit=no' > $daemonfanservice
-echo 'ExecStart=/storage/user/bin/pwmFanControl' > $daemonfanservice
-echo '[Install]' > $daemonfanservice
-echo 'WantedBy=multi-user.target' > $daemonfanservice
+echo '[Unit]' >> $daemonfanservice
+echo 'Description=DeskPi PWM Control Fan Service' >> $daemonfanservice
+echo 'After=multi-user.target' >> $daemonfanservice
+echo '[Service]' >> $daemonfanservice
+echo 'Type=simple' >> $daemonfanservice
+echo 'RemainAfterExit=no' >> $daemonfanservice
+echo 'ExecStart=/storage/user/bin/pwmFanControl' >> $daemonfanservice
+echo '[Install]' >> $daemonfanservice
+echo 'WantedBy=multi-user.target' >> $daemonfanservice
 
 chmod 644 $daemonfanservice
 
@@ -839,18 +839,18 @@ echo "Successfully Built Fan Daemon"
 
 #echo "Building Power Daemon"
 
-#echo '[Unit]' > $shutdaemonscript
-#echo 'Description=DeskPi Safeshutdown Service' > $shutdaemonscript
-#echo 'Conflicts=reboot.target' > $shutdaemonscript
-#echo 'Before=halt.target shutdown.target poweroff.target' > $shutdaemonscript
-#echo 'DefaultDependencies=no' > $shutdaemonscript
-#echo '[Service]' > $shutdaemonscript
-#echo 'Type=oneshot' > $shutdaemonscript
-#echo 'ExecStart=/storage/user/bin/safecutoffpower' > $shutdaemonscript
-#echo 'RemainAfterExit=yes' > $shutdaemonscript
-#echo 'TimeoutSec=1' > $shutdaemonscript
-#echo '[Install]' > $shutdaemonscript
-#echo 'WantedBy=halt.target shutdown.target poweroff.target' > $shutdaemonscript
+#echo '[Unit]' >> $shutdaemonscript
+#echo 'Description=DeskPi Safeshutdown Service' >> $shutdaemonscript
+#echo 'Conflicts=reboot.target' >> $shutdaemonscript
+#echo 'Before=halt.target shutdown.target poweroff.target' >> $shutdaemonscript
+#echo 'DefaultDependencies=no' >> $shutdaemonscript
+#echo '[Service]' >> $shutdaemonscript
+#echo 'Type=oneshot' >> $shutdaemonscript
+#echo 'ExecStart=/storage/user/bin/safecutoffpower' >> $shutdaemonscript
+#echo 'RemainAfterExit=yes' >> $shutdaemonscript
+#echo 'TimeoutSec=1' >> $shutdaemonscript
+#echo '[Install]' >> $shutdaemonscript
+#echo 'WantedBy=halt.target shutdown.target poweroff.target' >> $shutdaemonscript
 
 #echo "Power Daemon Built"
 
