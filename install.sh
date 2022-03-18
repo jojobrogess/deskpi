@@ -5,6 +5,15 @@ daemonname="deskpi"
 installationfolder=$HOME/$daemonname-Test
 userlibrary=/storage/user/
 ################################################################
+
+deskpi_create_file() {
+	if [ -f $1 ]; then
+        rm $1
+    fi
+	touch $1
+	chmod 666 $1
+}
+
 ############################
 #### Create User Lib/Bin Directory
 ############################
@@ -21,10 +30,10 @@ fi
 
 daemonname="deskpi"
 daemonconfig=/storage/user/bin/deskpi-config
-shutdaemonscript=/storage/.config/$daemonname-safeshut.service
-deskpidaemon=/storage/.config/$daemonname.service
+#shutdaemonservice=/storage/.config/$daemonname-safeshut.service
+daemonfanservice=/storage/.config/$daemonname.service
 pwmdriver=/storage/user/bin/pwmFanControl
-unscript=/storage/user/bin/deskpi-uninstall.sh
+unscript=/storage/user/bin/deskpi-uninstall
 
 ################################################################
 
@@ -54,11 +63,7 @@ echo "Successfully Checked and Created the Boot Mode"
 
 echo "Create deskpi-config"
 
-if [ -e $daemonconfig ]; then
-	rm -f $daemonconfig
-	touch /storage/user/bin/deskpi-config
-	chmod 755 /storage/user/bin/deskpi-config
-fi
+deskpi_create_file $daemonconfig
 
 echo '#!/bin/bash' >> $daemonconfig
 echo '# This is a fan speed control utility tool for user to customize fan speed.' >> $daemonconfig
@@ -162,6 +167,8 @@ echo '	   ;;' >> $daemonconfig
 echo 'esac' >> $daemonconfig
 echo '' >> $daemonconfig
 
+chmod 755 $daemonconfig
+
 echo "Successfully Created deskpi-config"
 
 ############################
@@ -170,17 +177,13 @@ echo "Successfully Created deskpi-config"
 
 echo "Create Uninstall Script"
 
-if [ -e $unscript ]; then
-	rm -f $unscript
-	touch /storage/user/bin/deskpi-uninstall
-	chmod +x /storage/user/bin/deskpi-uninstall
-fi
+deskpi_create_file $unscript
 
 echo '#!/bin/bash' >>$unscript
 echo '# uninstall deskpi script ' >>$unscript
 echo 'daemonname='deskpi'' >>$unscript
 echo 'daemonconfig=/storage/user/bin/deskpi-config' >>$unscript
-echo 'deskpidaemon="/storage/.config/$daemonname.service"' >>$unscript
+echo 'daemonfanservice="/storage/.config/$daemonname.service"' >>$unscript
 echo '#safeshutdaemon="/storage/.config/$daemonname-safeshut.service"' >>$unscript
 
 echo 'echo "Uninstalling DeskPi PWM Fan Control and Safeshut Service."' >>$unscript
@@ -204,7 +207,7 @@ echo '#systemctl disable $daemonname-safeshut.service 2&>/dev/null' >>$unscript
 echo '#systemctl stop $daemonname-safeshut.service 2&>/dev/null' >>$unscript
 
 echo 'echo "Remove DeskPi PWM Fan Control and Safeshut Service."' >>$unscript
-echo 'rm -f  $deskpidaemon  2&>/dev/null' >>$unscript
+echo 'rm -f  $daemonfanservice  2&>/dev/null' >>$unscript
 echo '#rm -f  $safeshutdaemon 2&>/dev/null' >>$unscript
 echo '#rm -f /storage/user/bin/fanStop 2&>/dev/null' >>$unscript
 echo 'rm -f /storage/user/bin/pwmFanControl 2&>/dev/null' >>$unscript
@@ -222,6 +225,8 @@ echo 'sleep 2' >>$unscript
 echo 'echo "?"' >>$unscript
 echo 'rm -- "$0"' >>$unscript
 
+chmod 755 $unscript
+
 echo "Successfully Creating Uninstall Script"
 
 ############################
@@ -230,11 +235,7 @@ echo "Successfully Creating Uninstall Script"
 
 echo "Create Driver Daemon"
 
-if [ -e $pwmdriver ]; then
-	rm -f $pwmdriver
-	touch /storage/user/bin/pwmFanControl
-	chmod 755 /storage/user/bin/pwmFanControl
-fi
+deskpi_create_file $pwmdriver
 
 echo '7f45 4c46 0101 0100 0000 0000 0000 0000' >> $pwmdriver
 echo '0200 2800 0100 0000 9c06 0100 3400 0000' >> $pwmdriver
@@ -801,20 +802,19 @@ echo "Successfully Created Driver Daemon"
 
 echo "Building Fan Daemon"
 
-if [ -e $deskpidaemon ]; then
-	rm -f $deskpidaemon
-	touch /storage/.config/system.d/$daemonname.service
-fi
+deskpi_create_file $daemonfanservice
 
-echo '[Unit]' > $deskpidaemon
-echo 'Description=DeskPi PWM Control Fan Service' > $deskpidaemon
-echo 'After=multi-user.target' > $deskpidaemon
-echo '[Service]' > $deskpidaemon
-echo 'Type=simple' > $deskpidaemon
-echo 'RemainAfterExit=no' > $deskpidaemon
-echo 'ExecStart=/storage/user/bin/pwmFanControl' > $deskpidaemon
-echo '[Install]' > $deskpidaemon
-echo 'WantedBy=multi-user.target' > $deskpidaemon
+echo '[Unit]' > $daemonfanservice
+echo 'Description=DeskPi PWM Control Fan Service' > $daemonfanservice
+echo 'After=multi-user.target' > $daemonfanservice
+echo '[Service]' > $daemonfanservice
+echo 'Type=simple' > $daemonfanservice
+echo 'RemainAfterExit=no' > $daemonfanservice
+echo 'ExecStart=/storage/user/bin/pwmFanControl' > $daemonfanservice
+echo '[Install]' > $daemonfanservice
+echo 'WantedBy=multi-user.target' > $daemonfanservice
+
+chmod 644 $daemonfanservice
 
 echo "Successfully Built Fan Daemon"
 
@@ -831,6 +831,7 @@ echo "Successfully Built Fan Daemon"
 #fi
 
 #echo "Successfully Created Safe ShutService"
+
 
 ############################
 #####Build Power Daemon#####
@@ -882,5 +883,8 @@ echo "System requires rebooting system to take effect."
 sleep 5
 #echo "System will reboot in 5 seconds to take effect." 
 sync
-#sleep 5 
-#reboot
+
+#if [ $needsshutdownedit -gt 0 ]
+#then
+#	nano $deskpishutdownscript
+#fi
