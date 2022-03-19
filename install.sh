@@ -77,7 +77,6 @@ echo '# pwm_100 means sending 100% PWM signal to MCU.The fan will run at 100% sp
 echo '#' >> $daemonconfig
 echo '# This is the serial port that connect to deskPi mainboard and it will' >> $daemonconfig
 echo '# communicate with Raspberry Pi and get the signal for fan speed adjusting.' >> $daemonconfig
-echo '#. /storage/user/lib/lsb/init-functions' >> $daemonconfig
 echo 'sys=/storage/.kodi/addons/virtual.rpi.tools/lib' >> $daemonconfig
 echo 'serial=/storage/.kodi/addons/script.module.pyserial/lib/' >> $daemonconfig
 echo 'serial_port=/dev/ttyUSB0' >> $daemonconfig
@@ -183,7 +182,7 @@ echo '# uninstall deskpi script ' >>$uninstall
 echo 'daemonname='deskpi'' >>$uninstall
 echo 'daemonconfig=/storage/user/bin/deskpi-config' >>$uninstall
 echo 'daemonfanservice="/storage/.config/system.d/$daemonname.service"' >>$uninstall
-echo '#safeshutdaemon="/storage/.config/system.d/$daemonname-safeshut.service"' >>$uninstall
+echo '#safeshutdaemon="/storage/.config/system.d/$daemonname-safeshutoff.service"' >>$uninstall
 echo '' >>$uninstall
 echo 'echo "Uninstalling DeskPi PWM Fan Control and Safeshut Service."' >>$uninstall
 echo 'sleep 1' >>$uninstall
@@ -202,8 +201,8 @@ echo 'echo "Diable DeskPi PWM Fan Control and Safeshut Service."' >>$uninstall
 echo '' >>$uninstall
 echo 'systemctl disable $daemonname.service 2&>/dev/null' >>$uninstall
 echo 'systemctl stop $daemonname.service  2&>/dev/null' >>$uninstall
-echo '#systemctl disable $daemonname-safeshut.service 2&>/dev/null' >>$uninstall
-echo '#systemctl stop $daemonname-safeshut.service 2&>/dev/null' >>$uninstall
+echo '#systemctl disable $daemonname-safeshutoff.service 2&>/dev/null' >>$uninstall
+echo '#systemctl stop $daemonname-safeshutoff.service 2&>/dev/null' >>$uninstall
 echo '' >>$uninstall
 echo 'echo "Remove DeskPi PWM Fan Control and Safeshut Service."' >>$uninstall
 echo 'rm -f  $daemonfanservice  2&>/dev/null' >>$uninstall
@@ -285,7 +284,7 @@ echo 'After=multi-user.target' >> $daemonfanservice
 echo '[Service]' >> $daemonfanservice
 echo 'Type=simple' >> $daemonfanservice
 echo 'RemainAfterExit=no' >> $daemonfanservice
-echo 'ExecStart=/bin/sh -c ". /etc/profile; exec /usr/bin/python /storage/user/bin/$daemonname-fancontrol.py"' >> $daemonfanservice
+echo 'ExecStart=/bin/sh -c ". /etc/profile; exec /usr/bin/python /storage/user/bin/deskpi-fancontrol.py"' >> $daemonfanservice
 echo '[Install]' >> $daemonfanservice
 echo 'WantedBy=multi-user.target' >> $daemonfanservice
 
@@ -362,6 +361,7 @@ echo "DeskPi Service Load module."
 systemctl daemon-reload
 systemctl enable $daemonname.service
 systemctl start $daemonname.service 
+systemctl daemon-reload
 systemctl enable $daemonname-safeshutoff.service
 systemctl start $daemonname-safeshutoff.service
 
