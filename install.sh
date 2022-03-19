@@ -285,7 +285,7 @@ echo 'After=multi-user.target' >> $daemonfanservice
 echo '[Service]' >> $daemonfanservice
 echo 'Type=simple' >> $daemonfanservice
 echo 'RemainAfterExit=no' >> $daemonfanservice
-echo 'ExecStart=/storage/user/bin/deskpi-fancontrol.py' >> $daemonfanservice
+echo 'ExecStart=/bin/sh -c ". /etc/profile; exec /usr/bin/python /storage/user/bin/$daemonname-fancontrol.py"' >> $daemonfanservice
 echo '[Install]' >> $daemonfanservice
 echo 'WantedBy=multi-user.target' >> $daemonfanservice
 
@@ -336,7 +336,7 @@ echo 'Before=halt.target shutdown.target poweroff.target' >> $shutdaemonservice
 echo 'DefaultDependencies=no' >> $shutdaemonservice
 echo '[Service]' >> $shutdaemonservice
 echo 'Type=oneshot' >> $shutdaemonservice
-echo 'ExecStart=/storage/.config/system.d/deskpi-safeshutoff.service' >> $shutdaemonservice
+echo 'ExecStart=/bin/sh -c ". /etc/profile; exec /usr/bin/python /storage/.config/system.d/deskpi-safeshutoff.service"' >> $shutdaemonservice
 echo 'RemainAfterExit=yes' >> $shutdaemonservice
 echo 'TimeoutSec=1' >> $shutdaemonservice
 echo '[Install]' >> $shutdaemonservice
@@ -361,9 +361,9 @@ echo "DeskPi Service Load module."
 
 systemctl daemon-reload
 systemctl enable $daemonname.service
-systemctl start $daemonname.service &
-systemctl enable $daemonname-safeshut.service
-systemctl start $daemonname-safeshut.service
+systemctl start $daemonname.service 
+systemctl enable $daemonname-safeshutoff.service
+systemctl start $daemonname-safeshutoff.service
 
 echo "Deskpi Service Loaded Modules Correctly"
 
