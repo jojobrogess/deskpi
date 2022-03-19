@@ -29,10 +29,10 @@ fi
 
 daemonname="deskpi"
 daemonconfig=/storage/user/bin/$daemonname-config
-shutdaemonservice=/storage/.config/$daemonname-safeshut.service
+shutdaemonservice=/storage/.config/system.d/$daemonname-safeshutoff.service
 daemonfanservice=/storage/.config/system.d/$daemonname.service
 button=/storage/user/bin/$daemonname-safepower.py
-pwmdriver=/storage/user/bin/$daemonname-FanControl.py
+pwmdriver=/storage/user/bin/$daemonname-fancontrol.py
 uninstall=/storage/user/bin/$daemonname-uninstall
 
 ################################################################
@@ -184,11 +184,11 @@ echo 'daemonname='deskpi'' >>$uninstall
 echo 'daemonconfig=/storage/user/bin/deskpi-config' >>$uninstall
 echo 'daemonfanservice="/storage/.config/system.d/$daemonname.service"' >>$uninstall
 echo '#safeshutdaemon="/storage/.config/system.d/$daemonname-safeshut.service"' >>$uninstall
-
+echo '' >>$uninstall
 echo 'echo "Uninstalling DeskPi PWM Fan Control and Safeshut Service."' >>$uninstall
 echo 'sleep 1' >>$uninstall
 echo 'echo "Remove otg_mode=1 configure from /flash/config.txt file"' >>$uninstall
-
+echo '' >>$uninstall
 echo 'PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')' >>$uninstall
 echo 'if [ -n "$PIINFO" ]' >>$uninstall
 echo 'then' >>$uninstall
@@ -197,22 +197,22 @@ echo '	    sed -i 'otg_mode=1,dtoverlay=dwc2,dr_mode=host' /flash/config.txt # P
 echo '	mount -o remount,ro /flash' >>$uninstall
 echo 'echo "fi"' >>$uninstall
 echo 'echo "Removed otg_mode=1 configure from /flash/config.txt file"' >>$uninstall
-
+echo '' >>$uninstall
 echo 'echo "Diable DeskPi PWM Fan Control and Safeshut Service."' >>$uninstall
-
+echo '' >>$uninstall
 echo 'systemctl disable $daemonname.service 2&>/dev/null' >>$uninstall
 echo 'systemctl stop $daemonname.service  2&>/dev/null' >>$uninstall
 echo '#systemctl disable $daemonname-safeshut.service 2&>/dev/null' >>$uninstall
 echo '#systemctl stop $daemonname-safeshut.service 2&>/dev/null' >>$uninstall
-
+echo '' >>$uninstall
 echo 'echo "Remove DeskPi PWM Fan Control and Safeshut Service."' >>$uninstall
 echo 'rm -f  $daemonfanservice  2&>/dev/null' >>$uninstall
 echo '#rm -f  $safeshutdaemon 2&>/dev/null' >>$uninstall
 echo '#rm -f /storage/user/bin/fanStop 2&>/dev/null' >>$uninstall
-echo 'rm -f /storage/user/bin/pwmFanControl 2&>/dev/null' >>$uninstall
+echo 'rm -f /storage/user/bin/deskpi-fancontrol.py 2&>/dev/null' >>$uninstall
 echo 'rm -f /storage/user/bin/deskpi-config 2&>/dev/null' >>$uninstall
 echo 'echo "Uninstall DeskPi Driver Successfully."' >>$uninstall
-
+echo '' >>$uninstall
 echo 'echo "Remove userfiles"' >>$uninstall
 echo 'rm -f $daemonconfig' >>$uninstall
 echo 'rm -f /storage/user/bin/deskpi.conf' >>$uninstall
@@ -223,6 +223,7 @@ echo 'echo "wish me luck"' >>$uninstall
 echo 'sleep 2' >>$uninstall
 echo 'echo "?"' >>$uninstall
 echo 'rm -- "$0"' >>$uninstall
+echo '' >>$uninstall
 
 chmod 755 $uninstall
 
@@ -240,15 +241,15 @@ echo '# Before you import the library, you need to install pyserial library.' >>
 echo 'import serial' >> $pwmdriver
 echo 'import time' >> $pwmdriver
 echo 'import subprocess' >> $pwmdriver
-
+echo '' >>$pwmdriver
 echo 'ser=serial.Serial("/dev/ttyUSB0", 9600, timeout=30)' >> $pwmdriver
-
+echo '' >>$pwmdriver
 echo 'try: ' >> $pwmdriver
 echo '    while True:' >> $pwmdriver
 echo '        if ser.isOpen():' >> $pwmdriver
 echo '            cpu_temp=subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print $2\'}')' >> $pwmdriver
 echo '            cpu_temp=int(cpu_temp.split('.')[0])' >> $pwmdriver
-
+echo '' >>$pwmdriver
 echo '            if cpu_temp < 40:' >> $pwmdriver
 echo '                ser.write(b'pwm_000')' >> $pwmdriver
 echo '            elif cpu_temp > 40 and cpu_temp < 50:' >> $pwmdriver
@@ -259,11 +260,11 @@ echo '            elif cpu_temp > 65 and cpu_temp < 75:' >> $pwmdriver
 echo '                ser.write(b'pwm_075')' >> $pwmdriver
 echo '            elif cpu_temp > 75:' >> $pwmdriver
 echo '                ser.write(b'pwm_100')' >> $pwmdriver
-
+echo '' >>$pwmdriver
 echo 'except KeyboardInterrupt:' >> $pwmdriver
 echo '    ser.write(b'pwm_000')' >> $pwmdriver
 echo '    ser.close()' >> $pwmdriver
-echo '' >> $pwmdriver
+echo ' ' >> $pwmdriver
 
 chmod 755 $pwmdriver
 
@@ -284,7 +285,7 @@ echo 'After=multi-user.target' >> $daemonfanservice
 echo '[Service]' >> $daemonfanservice
 echo 'Type=simple' >> $daemonfanservice
 echo 'RemainAfterExit=no' >> $daemonfanservice
-echo 'ExecStart=/storage/user/bin/pwmFanControl' >> $daemonfanservice
+echo 'ExecStart=/storage/user/bin/deskpi-fancontrol.py' >> $daemonfanservice
 echo '[Install]' >> $daemonfanservice
 echo 'WantedBy=multi-user.target' >> $daemonfanservice
 
@@ -298,7 +299,7 @@ echo "Successfully Built Fan Service"
 
 echo "Create Safe Shutoff Driver"
 
-deskpi_create_file $pwmdriver
+deskpi_create_file $button
 
 echo 'import serial' >> $button
 echo 'import time' >> $button
@@ -335,7 +336,7 @@ echo 'Before=halt.target shutdown.target poweroff.target' >> $shutdaemonservice
 echo 'DefaultDependencies=no' >> $shutdaemonservice
 echo '[Service]' >> $shutdaemonservice
 echo 'Type=oneshot' >> $shutdaemonservice
-echo 'ExecStart=/storage/user/bin/safecutoffpower' >> $shutdaemonservice
+echo 'ExecStart=/storage/.config/system.d/deskpi-safeshutoff.service' >> $shutdaemonservice
 echo 'RemainAfterExit=yes' >> $shutdaemonservice
 echo 'TimeoutSec=1' >> $shutdaemonservice
 echo '[Install]' >> $shutdaemonservice

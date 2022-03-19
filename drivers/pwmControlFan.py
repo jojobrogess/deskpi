@@ -25,5 +25,3 @@ try:
 except KeyboardInterrupt:
     ser.write(b'pwm_000')
     ser.close()
-    
-sS
