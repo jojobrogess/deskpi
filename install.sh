@@ -1,8 +1,18 @@
 #!/bin/bash
-####init library should be installed first prior to anything####
+################################################################
+################################################################
+########## Deskpi Fan And Power Button Install Script ##########
+################################################################
 ################################################################
 daemonname="deskpi"
 userlibrary=/storage/user/
+daemonconfig=/storage/user/bin/$daemonname-config
+shutdaemonservice=/storage/.config/system.d/$daemonname-safeshutoff.service
+daemonfanservice=/storage/.config/system.d/$daemonname.service
+button=/storage/user/bin/$daemonname-safepower.py
+pwmdriver=/storage/user/bin/$daemonname-fancontrol.py
+uninstall=/storage/user/bin/$daemonname-uninstall
+################################################################
 ################################################################
 
 deskpi_create_file() {
@@ -17,29 +27,13 @@ deskpi_create_file() {
 #### Create User Lib/Bin Directory
 ############################
 
+echo "DeskPi Fan control script installation Start." 
+
 if [ ! -d "/storage/user" ] ; then
 	mkdir -p $userlibrary
 	mkdir -p $userlibrary/lib
 	mkdir -p $userlibrary/bin
 fi
-
-################################################################
-################## Install Daemon and Service ##################
-################################################################
-
-daemonname="deskpi"
-daemonconfig=/storage/user/bin/$daemonname-config
-shutdaemonservice=/storage/.config/system.d/$daemonname-safeshutoff.service
-daemonfanservice=/storage/.config/system.d/$daemonname.service
-button=/storage/user/bin/$daemonname-safepower.py
-pwmdriver=/storage/user/bin/$daemonname-fancontrol.py
-uninstall=/storage/user/bin/$daemonname-uninstall
-
-################################################################
-
-echo "DeskPi Fan control script installation Start." 
-###Check for Previous install####
-
 
 ############################
 ######Check Boot Mode######
@@ -157,7 +151,7 @@ echo '	   systemctl start deskpi.service & ' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	7) ' >> $daemonconfig
 echo '	   echo "Cancel manual control and enable automatical fan control"' >> $daemonconfig
-echo '	   systemctl start deskpi.service &' >> $daemonconfig
+echo '	   systemctl stop deskpi.service &' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	*) ' >> $daemonconfig
 echo '	   echo "You typed the wrong selection, please try again!"' >> $daemonconfig
@@ -285,7 +279,7 @@ echo 'After=multi-user.target' >> $daemonfanservice
 echo '[Service]' >> $daemonfanservice
 echo 'Type=simple' >> $daemonfanservice
 echo 'RemainAfterExit=no' >> $daemonfanservice
-echo 'ExecStart=/bin/sh -c ". /etc/profile; exec /usr/bin/python /storage/user/bin/deskpi-fancontrol.py"' >> $daemonfanservice
+echo 'ExecStart=/bin/sh -c ". /etc/profile; exec /usr/bin/python /storage/user/bin/deskpi-fancontrol.py; exec /storage/user/bin/deskpi.conf' >> $daemonfanservice
 echo '[Install]' >> $daemonfanservice
 echo 'WantedBy=multi-user.target' >> $daemonfanservice
 
@@ -347,7 +341,7 @@ chmod 644 $daemonfanservice
 echo "Successfully Built Power Service"
 
 ################################################################
-################ Daemon & Service Installation ################
+################### Finish Up Install Script ###################
 ################################################################
 
 echo "DeskPi Service Configuration finished." 
