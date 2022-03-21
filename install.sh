@@ -99,7 +99,7 @@ echo '	echo "And 4 PWM values of different speeds parameters(for example 25, 50,
 echo '	echo "value),you can define the speed level during 0-100."' >> $daemonconfig
 echo '	for i in `seq 1 4`;' >> $daemonconfig
 echo '	do' >> $daemonconfig
-echo '	echo -e "\e[32;40mCurrent CPU Temperature:\e[0m \e[31;40m`vcgencmd measure_temp`\e[0m\n"' >> $daemonconfig
+echo "	echo -e "\e[32;40mCurrent CPU Temperature:\e[0m \e[31;40m`vcgencmd measure_temp|sed -e "s/temp=//" -e "s/\..*'/ /"`\e[0m\n"" >> $daemonconfig
 echo '	read -p  "Temperature_threshold_$i:" temp' >> $daemonconfig
 echo '        read -p  "Fan_Speed level_$i:" fan_speed_level' >> $daemonconfig
 echo '	sh -c "echo $temp" >> /storage/user/bin/deskpi.conf' >> $daemonconfig
@@ -236,16 +236,18 @@ echo "Create Fan Driver Daemon"
 
 deskpi_create_file $pwmdriver
 
-echo 'import serial' >> $pwmdriver
+echo 'import sys' >> pwmdriver
+echo 'sys.path.append('/storage/.local/lib/python3.8/site-packages/')' >> $pwmdriver
+echo 'import serial as serial' >> $pwmdriver
 echo 'import time' >> $pwmdriver
 echo 'import subprocess' >> $pwmdriver
 echo '' >>$pwmdriver
-echo 'ser=serial.Serial("/dev/ttyUSB0", 9600, timeout=30)' >> $pwmdriver
+echo 'ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=30)' >> $pwmdriver
 echo '' >>$pwmdriver
 echo 'try: ' >> $pwmdriver
 echo '    while True:' >> $pwmdriver
 echo '        if ser.isOpen():' >> $pwmdriver
-echo '            cpu_temp=subprocess.getoutput("/opt/vc/bin/vcgencmd measure_temp" | "sed -e "s/temp=//" -e "s/\..*'/ /")"'' >> $pwmdriver
+echo "            cpu_temp = subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print $2\'}')" >> $pwmdriver
 echo "            cpu_temp=int(cpu_temp.split('.')[0])" >> $pwmdriver
 echo '' >>$pwmdriver
 echo '            if cpu_temp < 40:' >> $pwmdriver
