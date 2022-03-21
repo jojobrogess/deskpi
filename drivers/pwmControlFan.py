@@ -1,4 +1,3 @@
-# Before you import the library, you need to install pyserial library.
 import serial
 import time
 import subprocess

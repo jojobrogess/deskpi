@@ -91,12 +91,12 @@ echo '		sh -c "rm -f /storage/user/bin/deskpi.conf"' >> $daemonconfig
 echo '	fi' >> $daemonconfig
 echo '	touch /storage/user/bin/deskpi.conf' >> $daemonconfig
 echo '	chmod 777 /storage/user/bin/deskpi.conf' >> $daemonconfig
-echo '	echo "Under normal circumstances, we recommend four gears. The' >> $daemonconfig
-echo '	following requires you to control the fans operating status according to' >> $daemonconfig
-echo '	the temperature and speed defined by yourself, and you need to input 4' >> $daemonconfig
-echo '	different temperature thresholds (for example: 42, 50, 60, 70) , And 4 PWM' >> $daemonconfig
-echo '	values of different speeds parameters(for example 25, 50, 75, 100, this is the default' >> $daemonconfig
-echo '	value),you can define the speed level during 0-100."' >> $daemonconfig
+echo '	echo "Under normal circumstances, we recommend four gears. The"' >> $daemonconfig
+echo '	echo "following requires you to control the fans operating status according to"' >> $daemonconfig
+echo '	echo "the temperature and speed defined by yourself, and you need to input 4"' >> $daemonconfig
+echo '	echo "ifferent temperature thresholds (for example: 42, 50, 60, 70)"' >> $daemonconfig
+echo '	echo "And 4 PWM values of different speeds parameters(for example 25, 50, 75, 100, this is the default"' >> $daemonconfig
+echo '	echo "value),you can define the speed level during 0-100."' >> $daemonconfig
 echo '	for i in `seq 1 4`;' >> $daemonconfig
 echo '	do' >> $daemonconfig
 echo '	echo -e "\e[32;40mCurrent CPU Temperature:\e[0m \e[31;40m`vcgencmd measure_temp`\e[0m\n"' >> $daemonconfig
@@ -236,7 +236,6 @@ echo "Create Fan Driver Daemon"
 
 deskpi_create_file $pwmdriver
 
-echo '# Before you import the library, you need to install pyserial library.' >> $pwmdriver
 echo 'import serial' >> $pwmdriver
 echo 'import time' >> $pwmdriver
 echo 'import subprocess' >> $pwmdriver
@@ -246,22 +245,22 @@ echo '' >>$pwmdriver
 echo 'try: ' >> $pwmdriver
 echo '    while True:' >> $pwmdriver
 echo '        if ser.isOpen():' >> $pwmdriver
-echo '            cpu_temp=subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print $2\'}')' >> $pwmdriver
-echo '            cpu_temp=int(cpu_temp.split('.')[0])' >> $pwmdriver
+echo '            cpu_temp=subprocess.getoutput("/opt/vc/bin/vcgencmd measure_temp" | "sed -e "s/temp=//" -e "s/\..*'/ /")"'' >> $pwmdriver
+echo "            cpu_temp=int(cpu_temp.split('.')[0])" >> $pwmdriver
 echo '' >>$pwmdriver
 echo '            if cpu_temp < 40:' >> $pwmdriver
-echo '                ser.write(b'pwm_000')' >> $pwmdriver
+echo "                ser.write(b'pwm_000')" >> $pwmdriver
 echo '            elif cpu_temp > 40 and cpu_temp < 50:' >> $pwmdriver
-echo '                ser.write(b'pwm_025')' >> $pwmdriver
+echo "                ser.write(b'pwm_025')" >> $pwmdriver
 echo '            elif cpu_temp > 50 and cpu_temp < 65:' >> $pwmdriver
-echo '                ser.write(b'pwm_050')' >> $pwmdriver
+echo "                ser.write(b'pwm_050')" >> $pwmdriver
 echo '            elif cpu_temp > 65 and cpu_temp < 75:' >> $pwmdriver
-echo '                ser.write(b'pwm_075')' >> $pwmdriver
+echo "                ser.write(b'pwm_075')" >> $pwmdriver
 echo '            elif cpu_temp > 75:' >> $pwmdriver
-echo '                ser.write(b'pwm_100')' >> $pwmdriver
+echo "                ser.write(b'pwm_100')" >> $pwmdriver
 echo '' >>$pwmdriver
 echo 'except KeyboardInterrupt:' >> $pwmdriver
-echo '    ser.write(b'pwm_000')' >> $pwmdriver
+echo "    ser.write(b'pwm_000')" >> $pwmdriver
 echo '    ser.close()' >> $pwmdriver
 echo ' ' >> $pwmdriver
 
@@ -308,11 +307,11 @@ echo '' >> $button
 echo 'try: ' >> $button
 echo '    while True:' >> $button
 echo '        if ser.isOpen():' >> $button
-echo '            ser.write(b'power_off')' >> $button
+echo "            ser.write(b'power_off')" >> $button
 echo '            ser.close()' >> $button
 echo '' >> $button
 echo 'except KeyboardInterrupt:' >> $button
-echo '    ser.write(b'power_off')' >> $button
+echo "    ser.write(b'power_off')" >> $button
 echo '    ser.close()' >> $button
 echo '    ' >> $button
 
