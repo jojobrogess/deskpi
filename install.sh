@@ -125,12 +125,12 @@ echo 'case $levelNumber in' >> $daemonconfig
 echo '	1) ' >> $daemonconfig
 echo '	   echo "You have selected 50% fan speed"' >> $daemonconfig
 echo '	   sh -c "echo pwm_050 > $serial_port"' >> $daemonconfig
-echo '	   echo "Fan speed has been change to 25%"' >> $daemonconfig
+echo '	   echo "Fan speed has been change to 50%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	2) ' >> $daemonconfig
 echo '	   echo "You have selected 65% fan speed"' >> $daemonconfig
 echo '	   sh -c "echo pwm_065 > $serial_port"' >> $daemonconfig
-echo '	   echo "Fan speed has been change to 50%"' >> $daemonconfig
+echo '	   echo "Fan speed has been change to 65%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	3) ' >> $daemonconfig
 echo '	   echo "You have selected 75% fan speed"' >> $daemonconfig
@@ -140,7 +140,7 @@ echo '	   ;;' >> $daemonconfig
 echo '	4) ' >> $daemonconfig
 echo '	   echo "You have selected 90% fan speed"' >> $daemonconfig
 echo '	   sh -c "echo pwm_090 > $serial_port"' >> $daemonconfig
-echo '	   echo "Fan speed has been change to 75%"' >> $daemonconfig
+echo '	   echo "Fan speed has been change to 90%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	5) ' >> $daemonconfig
 echo '	   echo "You have selected 100% fan speed"' >> $daemonconfig
