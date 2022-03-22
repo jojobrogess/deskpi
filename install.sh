@@ -179,9 +179,11 @@ echo 'import serial as serial' >> $pwmdriver
 echo 'import time' >> $pwmdriver
 echo 'import subprocess' >> $pwmdriver
 echo '' >>$pwmdriver
-echo 'ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=30)' >> $pwmdriver
+echo 'port = /dev/ttyUSB0' >>$pwmdriver
+echo 'baudrate = 9600' >>$pwmdriver
+echo 'ser = serial.Serial(port, baudrate, timeout=30)' >>$pwmdriver
 echo '' >>$pwmdriver
-echo 'try: ' >> $pwmdriver
+echo 'try:' >> $pwmdriver
 echo '    while True:' >> $pwmdriver
 echo '        if ser.isOpen():' >> $pwmdriver
 echo "            cpu_temp = subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print $2\'}')" >> $pwmdriver
