@@ -10,7 +10,7 @@ daemonconfig=/storage/user/bin/$daemonname-config
 daemonspowerervice=/storage/.config/system.d/$daemonname-poweroff.service
 daemonfanservice=/storage/.config/system.d/$daemonname.service
 powerbutton=/storage/user/bin/$daemonname-poweroff.py
-pwmdriver=/storage/user/bin/$daemonname-fancontrol.py
+defaultdriver=/storage/user/bin/$daemonname-fancontrol.py
 uninstall=/storage/user/bin/$daemonname-uninstall
 ################################################################
 ################################################################
@@ -94,7 +94,7 @@ echo '	echo "(for example 25, 50, 75, 100, these are the default values)"' >> $d
 echo '  echo "You can define the speed level during 0-100."' >> $daemonconfig
 echo '	for i in `seq 1 4`;' >> $daemonconfig
 echo '	do' >> $daemonconfig
-echo "	echo -e "\e[32;40mCurrent CPU Temperature:\e[0m \e[31;40m`vcgencmd measure_temp|sed -e "s/temp=//" -e "s/\..*'/ /"`\e[0m\n"" >> $daemonconfig
+echo "	echo -e '\e[32;40mCurrent CPU Temperature:\e[0m \e[31;40m`vcgencmd measure_temp|sed -e "s/temp=//" -e "s/\..*'/ /"`\e[0m\n'" >> $daemonconfig
 echo '	read -p  "Temperature_threshold_$i:" temp' >> $daemonconfig
 echo '        read -p  "Fan_Speed level_$i:" fan_speed_level' >> $daemonconfig
 echo '	sh -c "echo $temp" >> /storage/user/bin/deskpi.conf' >> $daemonconfig
@@ -103,29 +103,33 @@ echo '	done ' >> $daemonconfig
 echo '	echo "Configuration file has been created on /storage/user/bin/deskpi.conf"' >> $daemonconfig
 echo '}' >> $daemonconfig
 echo '' >> $daemonconfig
+echo 'echo "-----------------------------------------------------------------"' >> $daemonconfig
 echo 'echo "Welcome to the LIBREELEC-Deskpi Fan Speed Configuration File"' >> $daemonconfig
-echo 'echo "Please select the Fan Speed level you want: "' >> $daemonconfig
-echo 'echo "Or Enable variable Fan Speed, to set the Fan Speed according to Cpu Temperature"' >> $daemonconfig
-echo 'echo "---------------------------------------------------------------"' >> $daemonconfig
-echo 'echo "1 - Set the Fan Speed to 25%"' >> $daemonconfig
-echo 'echo "2 - Set the Fan Speed to 50%"' >> $daemonconfig
+echo 'echo "-----------------------------------------------------------------"' >> $daemonconfig
+echo 'echo "Please select the Fan Speed level you want or Enable variable "' >> $daemonconfig
+echo 'echo "Fan Speed, to set the Fan Speed according to Cpu Temperature. Or "' >> $daemonconfig
+echo 'echo "create custom Variables for Fan Speeds according to Cpu Temps."' >> $daemonconfig
+echo 'echo "-----------------------------------------------------------------"' >> $daemonconfig
+echo 'echo "1 - Set the Fan Speed to 50%"' >> $daemonconfig
+echo 'echo "2 - Set the Fan Speed to 65%"' >> $daemonconfig
 echo 'echo "3 - Set the Fan Speed to 75%"' >> $daemonconfig
-echo 'echo "4 - Set the Fan Speed to 100%"' >> $daemonconfig
-echo 'echo "5 - Turn off Fan"' >> $daemonconfig
-echo 'echo "6 - Create custom Variable Fan Speed according to Cpu Temperature"' >> $daemonconfig
+echo 'echo "4 - Set the Fan Speed to 90%"' >> $daemonconfig
+echo 'echo "5 - Set the Fan Speed to 100%"' >> $daemonconfig
+echo 'echo "6 - Turn off Fan"' >> $daemonconfig
 echo 'echo "7 - Enable default Variable Fan Speed Control"' >> $daemonconfig
-echo 'echo "---------------------------------------------------------------"' >> $daemonconfig
+echo 'echo "8 - Create custom config Fan Speed according to Cpu Temperature"' >> $daemonconfig
+echo 'echo "-----------------------------------------------------------------"' >> $daemonconfig
 echo 'echo "Input Number and Press Enter."' >> $daemonconfig
 echo 'read -p "Your choice:" levelNumber' >> $daemonconfig
 echo 'case $levelNumber in' >> $daemonconfig
 echo '	1) ' >> $daemonconfig
-echo '	   echo "You have selected 25% fan speed"' >> $daemonconfig
-echo '	   sh -c "echo pwm_025 > $serial_port"' >> $daemonconfig
+echo '	   echo "You have selected 50% fan speed"' >> $daemonconfig
+echo '	   sh -c "echo pwm_050 > $serial_port"' >> $daemonconfig
 echo '	   echo "Fan speed has been change to 25%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	2) ' >> $daemonconfig
-echo '	   echo "You have selected 50% fan speed"' >> $daemonconfig
-echo '	   sh -c "echo pwm_050 > $serial_port"' >> $daemonconfig
+echo '	   echo "You have selected 65% fan speed"' >> $daemonconfig
+echo '	   sh -c "echo pwm_065 > $serial_port"' >> $daemonconfig
 echo '	   echo "Fan speed has been change to 50%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	3) ' >> $daemonconfig
@@ -134,25 +138,30 @@ echo '	   sh -c "echo pwm_075 > $serial_port"' >> $daemonconfig
 echo '	   echo "Fan speed has been change to 75%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	4) ' >> $daemonconfig
+echo '	   echo "You have selected 90% fan speed"' >> $daemonconfig
+echo '	   sh -c "echo pwm_090 > $serial_port"' >> $daemonconfig
+echo '	   echo "Fan speed has been change to 75%"' >> $daemonconfig
+echo '	   ;;' >> $daemonconfig
+echo '	5) ' >> $daemonconfig
 echo '	   echo "You have selected 100% fan speed"' >> $daemonconfig
 echo '	   sh -c "echo pwm_100 > $serial_port"' >> $daemonconfig
 echo '	   echo "Fan speed has been change to 100%"' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
-echo '	5) ' >> $daemonconfig
+echo '	6) ' >> $daemonconfig
 echo '	   echo "Turn off fan"' >> $daemonconfig
 echo '	   sh -c "echo pwm_000 > $serial_port"' >> $daemonconfig
 echo '	   echo "Fan has been turned off."' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
-echo '	6) ' >> $daemonconfig
+echo '	7) ' >> $daemonconfig
+echo '	   echo "Enabled default variable fan speed values"' >> $daemonconfig
+echo '	   echo "Default values are located at (/storage/user/bin/deskpi-fancontrol.py)"' >> $daemonconfig
+echo '	   systemctl stop deskpi.service &' >> $daemonconfig
+echo '	   ;;' >> $daemonconfig
+echo '	8) ' >> $daemonconfig
 echo '	   echo "Enabled Custom variable fan speed according to cpu temperature"' >> $daemonconfig
 echo '	   systemctl stop deskpi.service & ' >> $daemonconfig
 echo '	   set_config' >> $daemonconfig
 echo '	   systemctl start deskpi.service & ' >> $daemonconfig
-echo '	   ;;' >> $daemonconfig
-echo '	7) ' >> $daemonconfig
-echo '	   echo "Enabled default variable fan speed values"' >> $daemonconfig
-echo '	   echo "Default values stored in (/storage/user/bin/$daemonname-fancontrol.py)' >> $daemonconfig
-echo '	   systemctl stop deskpi.service &' >> $daemonconfig
 echo '	   ;;' >> $daemonconfig
 echo '	*) ' >> $daemonconfig
 echo '	   echo "Looks like you input the wrong number"' >> $daemonconfig
@@ -165,49 +174,49 @@ chmod 755 $daemonconfig
 
 echo "Successfully Created deskpi-config"
 
-############################
-####Create Driver Daemon####
-############################
+#############################
+#Create Default Driver Daemon
+#############################
 
-echo "Create Fan Driver Daemon"
+echo "Create Fan Default Driver Daemon"
 
-deskpi_create_file $pwmdriver
+deskpi_create_file $defaultdriver
 
-echo 'import sys' >> $pwmdriver
-echo 'sys.path.append('/storage/.local/lib/python3.8/site-packages/')' >> $pwmdriver
-echo 'import serial as serial' >> $pwmdriver
-echo 'import time' >> $pwmdriver
-echo 'import subprocess' >> $pwmdriver
-echo '' >>$pwmdriver
-echo 'port = /dev/ttyUSB0' >>$pwmdriver
-echo 'baudrate = 9600' >>$pwmdriver
-echo 'ser = serial.Serial(port, baudrate, timeout=30)' >>$pwmdriver
-echo '' >>$pwmdriver
-echo 'try:' >> $pwmdriver
-echo '    while True:' >> $pwmdriver
-echo '        if ser.isOpen():' >> $pwmdriver
-echo "            cpu_temp = subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print \$2\'}')" >> $pwmdriver
-echo "            cpu_temp=int(cpu_temp.split('.')[0])" >> $pwmdriver
-echo '' >>$pwmdriver
-echo '            if cpu_temp < 35:' >> $pwmdriver
-echo "                ser.write(b'pwm_000')" >> $pwmdriver
-echo '            elif cpu_temp > 35 and cpu_temp < 40:' >> $pwmdriver
-echo "                ser.write(b'pwm_065')" >> $pwmdriver
-echo '            elif cpu_temp > 40 and cpu_temp < 45:' >> $pwmdriver
-echo "                ser.write(b'pwm_075')" >> $pwmdriver
-echo '            elif cpu_temp > 45 and cpu_temp < 50:' >> $pwmdriver
-echo "                ser.write(b'pwm_085')" >> $pwmdriver
-echo '            elif cpu_temp > 50:' >> $pwmdriver
-echo "                ser.write(b'pwm_100')" >> $pwmdriver
-echo '' >>$pwmdriver
-echo 'except KeyboardInterrupt:' >> $pwmdriver
-echo "    ser.write(b'pwm_000')" >> $pwmdriver
-echo '    ser.close()' >> $pwmdriver
-echo ' ' >> $pwmdriver
+echo 'import sys' >> $defaultdriver
+echo 'sys.path.append('/storage/.local/lib/python3.8/site-packages/')' >> $defaultdriver
+echo 'import serial as serial' >> $defaultdriver
+echo 'import time' >> $defaultdriver
+echo 'import subprocess' >> $defaultdriver
+echo '' >>$defaultdriver
+echo 'port = /dev/ttyUSB0' >>$defaultdriver
+echo 'baudrate = 9600' >>$defaultdriver
+echo 'ser = serial.Serial(port, baudrate, timeout=30)' >>$defaultdriver
+echo '' >>$defaultdriver
+echo 'try:' >> $defaultdriver
+echo '    while True:' >> $defaultdriver
+echo '        if ser.isOpen():' >> $defaultdriver
+echo "            cpu_temp = subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print \$2\'}')" >> $defaultdriver
+echo "            cpu_temp=int(cpu_temp.split('.')[0])" >> $defaultdriver
+echo '' >>$defaultdriver
+echo '            if cpu_temp < 35:' >> $defaultdriver
+echo "                ser.write(b'pwm_000')" >> $defaultdriver
+echo '            elif cpu_temp > 35 and cpu_temp < 40:' >> $defaultdriver
+echo "                ser.write(b'pwm_065')" >> $defaultdriver
+echo '            elif cpu_temp > 40 and cpu_temp < 45:' >> $defaultdriver
+echo "                ser.write(b'pwm_075')" >> $defaultdriver
+echo '            elif cpu_temp > 45 and cpu_temp < 50:' >> $defaultdriver
+echo "                ser.write(b'pwm_085')" >> $defaultdriver
+echo '            elif cpu_temp > 50:' >> $defaultdriver
+echo "                ser.write(b'pwm_100')" >> $defaultdriver
+echo '' >>$defaultdriver
+echo 'except KeyboardInterrupt:' >> $defaultdriver
+echo "    ser.write(b'pwm_000')" >> $defaultdriver
+echo '    ser.close()' >> $defaultdriver
+echo ' ' >> $defaultdriver
 
-chmod 755 $pwmdriver
+chmod 755 $defaultdriver
 
-echo "Successfully Created Driver Daemon"
+echo "Successfully Created Default Driver Daemon"
 
 
 ############################
