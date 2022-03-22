@@ -363,7 +363,7 @@ echo "Successfully Created the Uninstall Script"
 ################################################################
 
 echo "DeskPi Services and Daemons have been built." 
-echo "Deskpi Services and Daemons have Successfully finished"
+echo "Installation of Deskpi Services and Daemons have Successfully finished"
 
 ############################
 #######Stop Services########
@@ -390,4 +390,3 @@ echo "After Reboot has finished, reconnect and run"
 echo "./user/bin/deskpi-config to finish setting everything up"
 sleep 5
 sync
-reboot
