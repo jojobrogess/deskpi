@@ -20,7 +20,6 @@ deskpi_create_file() {
         rm $1
     fi
 	touch $1
-	chmod 666 $1
 }
 
 ############################
@@ -183,13 +182,13 @@ echo "Create Fan Default Driver Daemon"
 deskpi_create_file $defaultdriver
 
 echo 'import sys' >> $defaultdriver
-echo 'sys.path.append('/storage/.local/lib/python3.8/site-packages/')' >> $defaultdriver
+echo "sys.path.append('/storage/.local/lib/python3.8/site-packages/')" >> $defaultdriver
 echo 'import serial as serial' >> $defaultdriver
 echo 'import time' >> $defaultdriver
 echo 'import subprocess' >> $defaultdriver
 echo '' >>$defaultdriver
-echo 'port = /dev/ttyUSB0' >>$defaultdriver
-echo 'baudrate = 9600' >>$defaultdriver
+echo "port = '/dev/ttyUSB0'" >>$defaultdriver
+echo "baudrate = '9600'" >>$defaultdriver
 echo 'ser = serial.Serial(port, baudrate, timeout=30)' >>$defaultdriver
 echo '' >>$defaultdriver
 echo 'try:' >> $defaultdriver
@@ -228,7 +227,7 @@ echo "Building Fan Service"
 deskpi_create_file $daemonfanservice
 
 echo '[Unit]' >> $daemonfanservice
-echo 'Description=DeskPi Fan Service' >> $daemonfanservice
+echo 'Description=DeskPi_Fan_Service' >> $daemonfanservice
 echo 'After=multi-user.target' >> $daemonfanservice
 echo '[Service]' >> $daemonfanservice
 echo 'Type=simple' >> $daemonfanservice
@@ -278,7 +277,7 @@ echo "Building Power Daemon"
 deskpi_create_file $daemonspowerervice
 
 echo '[Unit]' >> $daemonspowerervice
-echo 'Description=DeskPi Power Button Service' >> $daemonspowerervice
+echo 'Description=DeskPi_Power_Button_Service' >> $daemonspowerervice
 echo 'Conflicts=reboot.target' >> $daemonspowerervice
 echo 'Before=halt.target shutdown.target poweroff.target' >> $daemonspowerervice
 echo 'DefaultDependencies=no' >> $daemonspowerervice
@@ -302,52 +301,52 @@ echo "Create Uninstall Script"
 
 deskpi_create_file $uninstall
 
-echo '#!/bin/bash' >>$uninstall
-echo '# uninstall deskpi script ' >>$uninstall
-echo 'daemonname='deskpi'' >>$uninstall
-echo 'daemonconfig=/storage/user/bin/deskpi-config' >>$uninstall
-echo 'daemonfanservice="/storage/.config/system.d/$daemonname.service"' >>$uninstall
-echo 'powerdaemon="/storage/.config/system.d/$daemonname-poweroff.service"' >>$uninstall
-echo '' >>$uninstall
-echo 'echo "Uninstalling DeskPi Services."' >>$uninstall
-echo 'sleep 1' >>$uninstall
-echo 'echo "Remove otg_mode=1 configure from /flash/config.txt file"' >>$uninstall
-echo '' >>$uninstall
-echo 'PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')' >>$uninstall
-echo 'if [ -n "$PIINFO" ]' >>$uninstall
-echo 'then' >>$uninstall
-echo '	mount -o remount,rw /flash' >>$uninstall
-echo "	    sed -i 'otg_mode=1,dtoverlay=dwc2,dr_mode=host,dtoverlay=gpio-ir,gpio_pin=17' /flash/config.txt # Probably not a good idea to just delete the last line rather than find and delete." >>$uninstall
-echo '	mount -o remount,ro /flash' >>$uninstall
-echo 'echo "fi"' >>$uninstall
-echo 'echo "Removed otg_mode=1 configure from /flash/config.txt file"' >>$uninstall
-echo '' >>$uninstall
-echo 'echo "Diable DeskPi Fan Control and PowerOff Service."' >>$uninstall
-echo '' >>$uninstall
-echo 'systemctl disable $daemonname.service 2&>/dev/null' >>$uninstall
-echo 'systemctl stop $daemonname.service  2&>/dev/null' >>$uninstall
-echo 'systemctl disable $daemonname-poweroff.service 2&>/dev/null' >>$uninstall
-echo 'systemctl stop $daemonname-poweroff.service 2&>/dev/null' >>$uninstall
-echo '' >>$uninstall
-echo 'echo "Remove DeskPi Fan Control and PowerOff Service."' >>$uninstall
-echo 'rm -f  $daemonfanservice  2&>/dev/null' >>$uninstall
-echo 'rm -f  $powerdaemon 2&>/dev/null' >>$uninstall
-echo 'rm -f /storage/user/bin/deskpi-fancontrol.py 2&>/dev/null' >>$uninstall
-echo 'rm -f /storage/user/bin/deskpi-poweroff.py 2&>/dev/null' >>$uninstall
-echo 'rm -f /storage/user/bin/deskpi-config 2&>/dev/null' >>$uninstall
-echo 'echo "Uninstall DeskPi Driver Successfully."' >>$uninstall
-echo '' >>$uninstall
-echo 'echo "Remove userfiles"' >>$uninstall
-echo 'rm -f $daemonconfig' >>$uninstall
-echo 'rm -f /storage/user/bin/deskpi.conf' >>$uninstall
-echo 'sleep 5' >>$uninstall
-echo 'echo "Going to attempt to kill myself now..."' >>$uninstall
-echo 'sleep 2' >>$uninstall
-echo 'echo "wish me luck"' >>$uninstall
-echo 'sleep 2' >>$uninstall
-echo 'echo "?"' >>$uninstall
-echo 'rm -- "$0"' >>$uninstall
-echo '' >>$uninstall
+echo '#!/bin/bash' >> $uninstall
+echo '# uninstall deskpi script ' >> $uninstall
+echo 'daemonname='deskpi'' >> $uninstall
+echo 'daemonconfig=/storage/user/bin/deskpi-config' >> $uninstall
+echo '' >> $uninstall
+echo 'echo "Uninstalling DeskPi Services."' >> $uninstall
+echo 'sleep 1' >> $uninstall
+echo 'echo "Remove otg_mode=1 configure from /flash/config.txt file"' >> $uninstall
+echo '' >> $uninstall
+echo 'PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')' >> $uninstall
+echo 'if [ -n "$PIINFO" ]' >> $uninstall
+echo 'then' >> $uninstall
+echo '	mount -o remount,rw /flash' >> $uninstall
+echo "	    sed -i 'otg_mode=1,dtoverlay=dwc2,dr_mode=host,dtoverlay=gpio-ir,gpio_pin=17' /flash/config.txt" >> $uninstall
+echo '# Probably not a good idea to just delete the last line rather than find and delete.' >> $uninstall
+echo '	mount -o remount,ro /flash' >> $uninstall
+echo 'echo "fi"' >> $uninstall
+echo 'echo "Removed otg_mode=1 configure from /flash/config.txt file"' >> $uninstall
+echo '' >> $uninstall
+echo 'echo "Diable DeskPi Fan Control and PowerOff Service."' >> $uninstall
+echo '' >> $uninstall
+echo 'systemctl disable $daemonname.service 2&>/dev/null' >> $uninstall
+echo 'systemctl stop $daemonname.service  2&>/dev/null' >> $uninstall
+echo 'systemctl disable $daemonname-poweroff.service 2&>/dev/null' >> $uninstall
+echo 'systemctl stop $daemonname-poweroff.service 2&>/dev/null' >> $uninstall
+echo '' >> $uninstall
+echo 'echo "Remove DeskPi Fan Control and PowerOff Service."' >> $uninstall
+echo 'rm -f  /storage/.config/system.d/$daemonname-poweroff.service 2&>/dev/null' >> $uninstall
+echo 'rm -f  /storage/.config/system.d/$daemonname.service  2&>/dev/null' >> $uninstall
+echo 'rm -f /storage/user/bin/deskpi-fancontrol.py 2&>/dev/null' >> $uninstall
+echo 'rm -f /storage/user/bin/deskpi-poweroff.py 2&>/dev/null' >> $uninstall
+echo 'rm -f /storage/user/bin/deskpi-config 2&>/dev/null' >> $uninstall
+echo 'rm -f /storage/user/bin/deskpi.conf 2&>/dev/null' >> $uninstall
+echo 'echo "Uninstall DeskPi Driver Successfully."' >> $uninstall
+echo '' >> $uninstall
+echo 'echo "Remove userfiles"' >> $uninstall
+echo 'rm -f $daemonconfig' >> $uninstall
+echo 'rm -f /storage/user/bin/deskpi.conf' >> $uninstall
+echo 'sleep 5' >> $uninstall
+echo 'echo "Going to attempt to kill myself now..."' >> $uninstall
+echo 'sleep 2' >> $uninstall
+echo 'echo "wish me luck"' >> $uninstall
+echo 'sleep 2' >> $uninstall
+echo 'echo "?"' >> $uninstall
+echo 'rm -- "$0"' >> $uninstall
+echo '' >> $uninstall
 
 chmod 755 $uninstall
 
@@ -384,7 +383,7 @@ echo "System requires rebooting system to take effect."
 sleep 5
 sync
 
-# to be tested later once addon gets working
+#to be tested later once addon gets working
 #(its a self deleting script )
 #if [ $needsshutdownedit -gt 0 ]
 #then
