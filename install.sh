@@ -99,22 +99,22 @@ echo '        read -p  "Fan_Speed level_$i:" fan_speed_level' >> $daemonconfig
 echo '	sh -c "echo $temp" >> /storage/user/bin/deskpi.conf' >> $daemonconfig
 echo '	sh -c "echo $fan_speed_level" >> /storage/user/bin/deskpi.conf' >> $daemonconfig
 echo '	done ' >> $daemonconfig
-echo '	echo "Configuration file has been created on /storage/user/bin/deskpi.conf"' >> $daemonconfig
+echo '	echo "Configuration setting saved to: /storage/user/bin/deskpi.conf"' >> $daemonconfig
 echo '}' >> $daemonconfig
 echo '' >> $daemonconfig
 echo 'echo "-----------------------------------------------------------------"' >> $daemonconfig
 echo 'echo "Welcome to the LIBREELEC-Deskpi Fan Speed Configuration File"' >> $daemonconfig
 echo 'echo "-----------------------------------------------------------------"' >> $daemonconfig
 echo 'echo "Please select the Fan Speed level you want or Enable variable "' >> $daemonconfig
-echo 'echo "Fan Speed, to set the Fan Speed according to Cpu Temperature. Or "' >> $daemonconfig
-echo 'echo "create custom Variables for Fan Speeds according to Cpu Temps."' >> $daemonconfig
+echo 'echo "Fan Speed, to set the Fan Speed according to Cpu Temperature."' >> $daemonconfig
+echo 'echo "Or create custom Variables for Fan Speeds according to Cpu Temps."' >> $daemonconfig
 echo 'echo "-----------------------------------------------------------------"' >> $daemonconfig
 echo 'echo "1 - Set the Fan Speed to 50%"' >> $daemonconfig
 echo 'echo "2 - Set the Fan Speed to 65%"' >> $daemonconfig
 echo 'echo "3 - Set the Fan Speed to 75%"' >> $daemonconfig
 echo 'echo "4 - Set the Fan Speed to 90%"' >> $daemonconfig
 echo 'echo "5 - Set the Fan Speed to 100%"' >> $daemonconfig
-echo 'echo "6 - Turn off Fan"' >> $daemonconfig
+echo 'echo "6 - Turn off the Fan"' >> $daemonconfig
 echo 'echo "7 - Enable default Variable Fan Speed Control"' >> $daemonconfig
 echo 'echo "8 - Create custom config Fan Speed according to Cpu Temperature"' >> $daemonconfig
 echo 'echo "-----------------------------------------------------------------"' >> $daemonconfig
@@ -308,7 +308,7 @@ echo 'daemonconfig=/storage/user/bin/deskpi-config' >> $uninstall
 echo '' >> $uninstall
 echo 'echo "Uninstalling DeskPi Services."' >> $uninstall
 echo 'sleep 1' >> $uninstall
-echo 'echo "Remove otg_mode=1 configure from /flash/config.txt file"' >> $uninstall
+echo 'echo "Remove otg_mode=1,dtoverlay=dwc2,dr_mode=host,dtoverlay=gpio-ir,gpio_pin=17 from /flash/config.txt file"' >> $uninstall
 echo '' >> $uninstall
 echo 'PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')' >> $uninstall
 echo 'if [ -n "$PIINFO" ]' >> $uninstall
@@ -321,11 +321,11 @@ echo 'echo "fi"' >> $uninstall
 echo 'echo "Removed otg_mode=1 configure from /flash/config.txt file"' >> $uninstall
 echo '' >> $uninstall
 echo 'echo "Diable DeskPi Fan Control and PowerOff Service."' >> $uninstall
-echo '' >> $uninstall
 echo 'systemctl disable $daemonname.service 2&>/dev/null' >> $uninstall
 echo 'systemctl stop $daemonname.service  2&>/dev/null' >> $uninstall
 echo 'systemctl disable $daemonname-poweroff.service 2&>/dev/null' >> $uninstall
 echo 'systemctl stop $daemonname-poweroff.service 2&>/dev/null' >> $uninstall
+echo 'echo "Successfully Disabled DeskPi Fan Control and PowerOff Service.' >> $uninstall
 echo '' >> $uninstall
 echo 'echo "Remove DeskPi Fan Control and PowerOff Service."' >> $uninstall
 echo 'rm -f  /storage/.config/system.d/$daemonname-poweroff.service 2&>/dev/null' >> $uninstall
@@ -334,11 +334,17 @@ echo 'rm -f /storage/user/bin/deskpi-fancontrol.py 2&>/dev/null' >> $uninstall
 echo 'rm -f /storage/user/bin/deskpi-poweroff.py 2&>/dev/null' >> $uninstall
 echo 'rm -f /storage/user/bin/deskpi-config 2&>/dev/null' >> $uninstall
 echo 'rm -f /storage/user/bin/deskpi.conf 2&>/dev/null' >> $uninstall
-echo 'echo "Uninstall DeskPi Driver Successfully."' >> $uninstall
+echo 'echo "Successfully Uninstalled DeskPi Driver."' >> $uninstall
 echo '' >> $uninstall
 echo 'echo "Remove userfiles"' >> $uninstall
 echo 'rm -f $daemonconfig' >> $uninstall
 echo 'rm -f /storage/user/bin/deskpi.conf' >> $uninstall
+echo 'echo "Removed userfiles"' >> $uninstall
+echo 'echo "Try to Remove Install Files"' >> $uninstall
+echo 'if [ -d "/storage/deskpi-ERno" ] ; then' >> $uninstall
+echo 'rm -f /storage/deskpi-ERno' >> $uninstall
+echo 'fi' >> $uninstall
+echo 'echo "If Install Files were found, they are deleted"' >> $uninstall
 echo 'sleep 5' >> $uninstall
 echo 'echo "Going to attempt to kill myself now..."' >> $uninstall
 echo 'sleep 2' >> $uninstall
@@ -350,7 +356,7 @@ echo '' >> $uninstall
 
 chmod 755 $uninstall
 
-echo "Successfully Creating Uninstall Script"
+echo "Successfully Created the Uninstall Script"
 
 ################################################################
 ################### Finish Up Install Script ###################
@@ -379,13 +385,9 @@ echo "Deskpi Service Loaded Modules Correctly"
 ############################
 
 echo "DeskPi Fan Control and PowerOff Service installed Successfully." 
-echo "System requires rebooting system to take effect."
+echo "System requires a reboot for settings to take effect."
+echo "After Reboot has finished, reconnect and run"
+echo "./user/bin/deskpi-config to finish setting everything up"
 sleep 5
 sync
-
-#to be tested later once addon gets working
-#(its a self deleting script )
-#if [ $needsshutdownedit -gt 0 ]
-#then
-#	nano $deskpishutdownscript
-#fi
+reboot
