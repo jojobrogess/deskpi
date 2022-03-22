@@ -41,11 +41,11 @@ fi
 
 echo "Check Boot Mode"
 
-PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1,dtoverlay=dwc2,dr_mode=host')
+PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1,dtoverlay=dwc2,dr_mode=host,dtoverlay=gpio-ir,gpio_pin=17')
 if [ -z "$PIINFO" ]
 then
 	mount -o remount,rw /flash
-	echo "otg_mode=1,dtoverlay=dwc2,dr_mode=host" >> /flash/config.txt
+	echo "otg_mode=1,dtoverlay=dwc2,dr_mode=host,dtoverlay=gpio-ir,gpio_pin=17" >> /flash/config.txt
 	mount -o remount,ro /flash
 fi
 
@@ -87,11 +87,11 @@ echo '	touch /storage/user/bin/deskpi.conf' >> $daemonconfig
 echo '	chmod 777 /storage/user/bin/deskpi.conf' >> $daemonconfig
 echo '	echo "The following allows you to control the fan speed according to"' >> $daemonconfig
 echo '	echo "the temperature and fan speed you define."' >> $daemonconfig
-echo '  echo "You  will need to input 4 different temperature thresholds"' >> $daemonconfig
-echo '  echo "(for example: 30, 40, 50, 60)"' >> $daemonconfig
+echo '	echo "You  will need to input 4 different temperature thresholds"' >> $daemonconfig
+echo '	echo "(for example: 30, 40, 50, 60)"' >> $daemonconfig
 echo '	echo "And 4 PWM values of different speeds parameters"' >> $daemonconfig
-echo '  echo "(for example 25, 50, 75, 100, these are the default values)"' >> $daemonconfig
-echo '	echo "You can define the speed level during 0-100."' >> $daemonconfig
+echo '	echo "(for example 25, 50, 75, 100, these are the default values)"' >> $daemonconfig
+echo '  echo "You can define the speed level during 0-100."' >> $daemonconfig
 echo '	for i in `seq 1 4`;' >> $daemonconfig
 echo '	do' >> $daemonconfig
 echo "	echo -e "\e[32;40mCurrent CPU Temperature:\e[0m \e[31;40m`vcgencmd measure_temp|sed -e "s/temp=//" -e "s/\..*'/ /"`\e[0m\n"" >> $daemonconfig
@@ -173,7 +173,7 @@ echo "Create Fan Driver Daemon"
 
 deskpi_create_file $pwmdriver
 
-echo 'import sys' >> pwmdriver
+echo 'import sys' >> $pwmdriver
 echo 'sys.path.append('/storage/.local/lib/python3.8/site-packages/')' >> $pwmdriver
 echo 'import serial as serial' >> $pwmdriver
 echo 'import time' >> $pwmdriver
@@ -186,7 +186,7 @@ echo '' >>$pwmdriver
 echo 'try:' >> $pwmdriver
 echo '    while True:' >> $pwmdriver
 echo '        if ser.isOpen():' >> $pwmdriver
-echo "            cpu_temp = subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print $2\'}')" >> $pwmdriver
+echo "            cpu_temp = subprocess.getoutput('vcgencmd measure_temp|awk -F\'=\' \'{print \$2\'}')" >> $pwmdriver
 echo "            cpu_temp=int(cpu_temp.split('.')[0])" >> $pwmdriver
 echo '' >>$pwmdriver
 echo '            if cpu_temp < 35:' >> $pwmdriver
@@ -275,7 +275,7 @@ echo 'Before=halt.target shutdown.target poweroff.target' >> $daemonspowerervice
 echo 'DefaultDependencies=no' >> $daemonspowerervice
 echo '[Service]' >> $daemonspowerervice
 echo 'Type=oneshot' >> $daemonspowerervice
-echo 'ExecStart=/bin/sh -c ". /etc/profile; exec /usr/bin/python /storage/.config/system.d/deskpi-poweroff.service"' >> $daemonspowerervice
+echo 'ExecStart=/bin/sh -c ". /etc/profile; exec /usr/bin/python /storage/user/bin/deskpi-poweroff.py"' >> $daemonspowerervice
 echo 'RemainAfterExit=yes' >> $daemonspowerervice
 echo 'TimeoutSec=1' >> $daemonspowerervice
 echo '[Install]' >> $daemonspowerervice
@@ -308,7 +308,7 @@ echo 'PIINFO=$(cat /flash/config.txt | grep 'otg_mode=1')' >>$uninstall
 echo 'if [ -n "$PIINFO" ]' >>$uninstall
 echo 'then' >>$uninstall
 echo '	mount -o remount,rw /flash' >>$uninstall
-echo '	    sed -i 'otg_mode=1,dtoverlay=dwc2,dr_mode=host' /flash/config.txt # Probably not a good idea to just delete the last line rather than find and delete.' >>$uninstall
+echo "	    sed -i 'otg_mode=1,dtoverlay=dwc2,dr_mode=host,dtoverlay=gpio-ir,gpio_pin=17' /flash/config.txt # Probably not a good idea to just delete the last line rather than find and delete." >>$uninstall
 echo '	mount -o remount,ro /flash' >>$uninstall
 echo 'echo "fi"' >>$uninstall
 echo 'echo "Removed otg_mode=1 configure from /flash/config.txt file"' >>$uninstall
@@ -317,14 +317,14 @@ echo 'echo "Diable DeskPi Fan Control and PowerOff Service."' >>$uninstall
 echo '' >>$uninstall
 echo 'systemctl disable $daemonname.service 2&>/dev/null' >>$uninstall
 echo 'systemctl stop $daemonname.service  2&>/dev/null' >>$uninstall
-echo '#systemctl disable $daemonname-poweroff.service 2&>/dev/null' >>$uninstall
-echo '#systemctl stop $daemonname-poweroff.service 2&>/dev/null' >>$uninstall
+echo 'systemctl disable $daemonname-poweroff.service 2&>/dev/null' >>$uninstall
+echo 'systemctl stop $daemonname-poweroff.service 2&>/dev/null' >>$uninstall
 echo '' >>$uninstall
 echo 'echo "Remove DeskPi Fan Control and PowerOff Service."' >>$uninstall
 echo 'rm -f  $daemonfanservice  2&>/dev/null' >>$uninstall
-echo 'rm -f  $poweraemon 2&>/dev/null' >>$uninstall
-echo 'rm -f /storage/user/bin/fanStop 2&>/dev/null' >>$uninstall
+echo 'rm -f  $powerdaemon 2&>/dev/null' >>$uninstall
 echo 'rm -f /storage/user/bin/deskpi-fancontrol.py 2&>/dev/null' >>$uninstall
+echo 'rm -f /storage/user/bin/deskpi-poweroff.py 2&>/dev/null' >>$uninstall
 echo 'rm -f /storage/user/bin/deskpi-config 2&>/dev/null' >>$uninstall
 echo 'echo "Uninstall DeskPi Driver Successfully."' >>$uninstall
 echo '' >>$uninstall
