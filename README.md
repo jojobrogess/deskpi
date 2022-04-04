@@ -1,3 +1,9 @@
+THIS REPO IS OBSOLETE 
+PLEASE GO TO 
+https://github.com/jojobrogess/Libreelec-Deskpi-Installer
+
+**********************************************************************************************************************************************************************
+
 THIS IS A CUSTOM INSTALL SCRIPT, literally hobbled together.
 FOR THE DESKPI PRO CASE and LIBRE ELEC.
 
